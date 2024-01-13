@@ -6,6 +6,7 @@ class Todo {
     this._priority = priority;
     this._finished = finished;
     this._dateCreated = new Date().getTime();
+    this._parentTitle = '';
   }
 
   get title() {
@@ -14,6 +15,14 @@ class Todo {
 
   set title(newTitle) {
     this._title = newTitle;
+  }
+
+  get parentTitle() {
+    return this._parentTitle;
+  }
+
+  set parentTitle(newParent) {
+    this._parentTitle = newParent;
   }
 
   get description() {
@@ -60,7 +69,8 @@ class TodoProject {
   }
 
   addTodo(todo) {
-    this._todos.shift(todo);
+    todo.parentTitle = this._title;
+    this._todos.unshift(todo);
   }
 
   removeTodo(todoId) {
@@ -69,6 +79,14 @@ class TodoProject {
 
   get todos() {
     return this._todos;
+  }
+
+  get title() {
+    return this._title;
+  }
+
+  getTodo(todoId) {
+    return this._todos[todoId];
   }
 }
 
@@ -87,6 +105,32 @@ class TodoList {
 
   get todoProjects() {
     return this._todoProjects;
+  }
+
+  getTodoProjectById(todoProjectId) {
+    return this._todoProjects[todoProjectId];
+  }
+
+  getTodoProjectByTitle(todoProjectTitle) {
+    let foundProject;
+
+    this._todoProjects.forEach((todoProject) => {
+      if (todoProject.title === todoProjectTitle) {
+        foundProject = todoProject;
+      }
+    });
+
+    return foundProject;
+  }
+
+  get allTodos() {
+    let todos = [];
+
+    this._todoProjects.forEach((todoProject) => {
+      todos = [...todos, ...todoProject.todos];
+    });
+
+    return todos;
   }
 }
 
