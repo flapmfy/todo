@@ -1,8 +1,20 @@
 import '/style.css';
-import { Todo, TodoProject, TodoList } from '/js/model.js';
+import { Todo, TodoProject, TodoList } from './model';
+import { handleProjectSwitch, currentProjectName } from './controller';
 
 const appElement = document.querySelector('#app');
-const currentProjectId = 0;
+
+//display sorted
+//decide HTML structure
+//add checkboxes for each todo, import something for working with dates
+//add interface for adding projects and todos to them
+//what will happen if user removes current project
+//add default projects for todos (all, finished, due soon, notes?)
+//save to local browser storage
+//refactor, SOLID principles
+
+//* try drag and drop for reordering todos */
+//* add calendar for picking due date of todo */
 
 ///////////////////////////////////////////
 let todo1 = new Todo('Test 1', 'Toto je pouze test', 2025, 1, false);
@@ -27,8 +39,8 @@ function listAllTodos() {
   displayTodos(list.allTodos);
 }
 
-function listProjectTodos(projectId) {
-  let listingProject = list.getTodoProject(projectId);
+function listProjectTodos(projectName) {
+  let listingProject = list.getTodoProjectByTitle(projectName);
   displayTodos(listingProject.todos);
 }
 
@@ -46,3 +58,34 @@ function createTodoElement(todoObj) {
   return todoElement;
 }
 
+function createProjectButton(todoProject) {
+  const button = document.createElement('button');
+  button.innerText = todoProject.title;
+  button.setAttribute('data-projectName', todoProject.title);
+
+  button.addEventListener('click', handleProjectSwitch);
+
+  appElement.appendChild(button);
+}
+
+function displayProjectButtons() {
+  list.todoProjects.forEach((todoProject) => {
+    createProjectButton(todoProject);
+  });
+}
+
+function clear() {
+  appElement.innerHTML = '';
+}
+
+function update() {
+  clear(); //update in future; decide best way for clearing or it it is even needed
+  displayProjectButtons();
+  listProjectTodos(currentProjectName);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  displayProjectButtons();
+});
+
+export { update };
