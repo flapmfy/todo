@@ -35,8 +35,46 @@ list.addTodoProject(todoProject1);
 list.addTodoProject(todoProject2);
 ///////////////////////////////////////////
 
-function listAllTodos() {
-  displayTodos(list.allTodos);
+function createElement(elementName, classes = [], content = '') {
+  const htmlElement = document.createElement(elementName);
+  htmlElement.innerText = content;
+  htmlElement.classList.add(...classes);
+  return htmlElement;
+}
+
+function appendElements(htmlElement, ...elements) {
+  elements.forEach((element) => {
+    htmlElement.appendChild(element);
+  });
+}
+
+function setAttributes(htmlElement, attributes) {
+  for (let attribute in attributes) {
+    htmlElement.setAttribute(attribute, attributes[attribute]);
+  }
+}
+
+// function listAllTodos() {
+//   displayTodos(list.allTodos);
+// }
+
+function createTodo(todoObj, todoId) {
+  const todoElement = createElement('div', ['todo']);
+  setAttributes(todoElement, { 'data-project': todoObj.parentTitle, 'data-todoId': todoId });
+
+  const todoElementContent = createElement('div');
+  const todoTitle = createElement('div', ['todo__title'], todoObj.title);
+  const todoDescription = createElement('div', ['todo__description'], todoObj.description);
+  appendElements(todoElementContent, todoTitle, todoDescription);
+  todoElement.appendChild(todoElementContent);
+
+  return todoElement;
+}
+
+function displayTodos(todosArray) {
+  todosArray.forEach((todo, id) => {
+    appElement.appendChild(createTodo(todo, id));
+  });
 }
 
 function listProjectTodos(projectName) {
@@ -44,34 +82,24 @@ function listProjectTodos(projectName) {
   displayTodos(listingProject.todos);
 }
 
-function displayTodos(todosArray) {
-  todosArray.forEach((todo) => {
-    appElement.appendChild(createTodoElement(todo));
-  });
-}
-
-function createTodoElement(todoObj) {
-  const todoElement = document.createElement('div');
-  const todoElementContent = `<div>${todoObj.title}</div><div>${todoObj.description}</div>`;
-  todoElement.innerHTML = todoElementContent;
-
-  return todoElement;
-}
-
 function createProjectButton(todoProject) {
-  const button = document.createElement('button');
-  button.innerText = todoProject.title;
+  const listItem = createElement('li');
+  const button = createElement('button', [], todoProject.title);
   button.setAttribute('data-projectName', todoProject.title);
-
   button.addEventListener('click', handleProjectSwitch);
+  listItem.appendChild(button);
 
-  appElement.appendChild(button);
+  return listItem;
 }
 
 function displayProjectButtons() {
+  const buttonsList = createElement('ul', ['projects']);
+
   list.todoProjects.forEach((todoProject) => {
-    createProjectButton(todoProject);
+    buttonsList.appendChild(createProjectButton(todoProject));
   });
+
+  appElement.appendChild(buttonsList);
 }
 
 function clear() {
