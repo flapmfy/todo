@@ -1,8 +1,20 @@
 import '/style.css';
-import { Todo, TodoProject, TodoList } from '/js/model.js';
+import { Todo, TodoProject, TodoList } from './model';
+import { handleProjectSwitch, currentProjectName } from './controller';
 
 const appElement = document.querySelector('#app');
-const currentProjectId = 0;
+
+//display sorted
+//decide HTML structure
+//add checkboxes for each todo, import something for working with dates
+//add interface for adding projects and todos to them
+//what will happen if user removes current project
+//add default projects for todos (all, finished, due soon, notes?)
+//save to local browser storage
+//refactor, SOLID principles
+
+//* try drag and drop for reordering todos */
+//* add calendar for picking due date of todo */
 
 ///////////////////////////////////////////
 let todo1 = new Todo('Test 1', 'Toto je pouze test', 2025, 1, false);
@@ -23,26 +35,85 @@ list.addTodoProject(todoProject1);
 list.addTodoProject(todoProject2);
 ///////////////////////////////////////////
 
-function listAllTodos() {
-  displayTodos(list.allTodos);
+function createElement(elementName, classes = [], content = '') {
+  const htmlElement = document.createElement(elementName);
+  htmlElement.innerText = content;
+  htmlElement.classList.add(...classes);
+  return htmlElement;
 }
 
-function listProjectTodos(projectId) {
-  let listingProject = list.getTodoProject(projectId);
-  displayTodos(listingProject.todos);
-}
-
-function displayTodos(todosArray) {
-  todosArray.forEach((todo) => {
-    appElement.appendChild(createTodoElement(todo));
+function appendElements(htmlElement, ...elements) {
+  elements.forEach((element) => {
+    htmlElement.appendChild(element);
   });
 }
 
-function createTodoElement(todoObj) {
-  const todoElement = document.createElement('div');
-  const todoElementContent = `<div>${todoObj.title}</div><div>${todoObj.description}</div>`;
-  todoElement.innerHTML = todoElementContent;
+function setAttributes(htmlElement, attributes) {
+  for (let attribute in attributes) {
+    htmlElement.setAttribute(attribute, attributes[attribute]);
+  }
+}
+
+// function listAllTodos() {
+//   displayTodos(list.allTodos);
+// }
+
+function createTodo(todoObj, todoId) {
+  const todoElement = createElement('div', ['todo']);
+  setAttributes(todoElement, { 'data-project': todoObj.parentTitle, 'data-todoId': todoId });
+
+  const todoElementContent = createElement('div');
+  const todoTitle = createElement('div', ['todo__title'], todoObj.title);
+  const todoDescription = createElement('div', ['todo__description'], todoObj.description);
+  appendElements(todoElementContent, todoTitle, todoDescription);
+  todoElement.appendChild(todoElementContent);
 
   return todoElement;
 }
 
+function displayTodos(todosArray) {
+  todosArray.forEach((todo, id) => {
+    appElement.appendChild(createTodo(todo, id));
+  });
+}
+
+function listProjectTodos(projectName) {
+  let listingProject = list.getTodoProjectByTitle(projectName);
+  displayTodos(listingProject.todos);
+}
+
+function createProjectButton(todoProject) {
+  const listItem = createElement('li');
+  const button = createElement('button', [], todoProject.title);
+  button.setAttribute('data-projectName', todoProject.title);
+  button.addEventListener('click', handleProjectSwitch);
+  listItem.appendChild(button);
+
+  return listItem;
+}
+
+function displayProjectButtons() {
+  const buttonsList = createElement('ul', ['projects']);
+
+  list.todoProjects.forEach((todoProject) => {
+    buttonsList.appendChild(createProjectButton(todoProject));
+  });
+
+  appElement.appendChild(buttonsList);
+}
+
+function clear() {
+  appElement.innerHTML = '';
+}
+
+function update() {
+  clear(); //update in future; decide best way for clearing or it it is even needed
+  displayProjectButtons();
+  listProjectTodos(currentProjectName);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  displayProjectButtons();
+});
+
+export { update };
