@@ -6,6 +6,25 @@
     <script type="module" src="/js/main.js" defer></script>
     <title>ToDo</title>
   </head>
-  <body id="app"></body>
-</html>
+  <body>
+    <main id="app">
+      <nav class="primary-nav">
+        <div class="logo">MyToDo</div>
+        <div id="overview">
+          <ul>
+            <li><button>Everything</button></li>
+            <li><button>Soon</button></li>
+            <li><button>Week</button></li>
+            <li><button>Finished</button></li>
+            <li>
+              <button>Filler</button>
+            </li>
+          </ul>
+        </div>
+        <div id="projects"></div>
+      </nav>
 
+      <div class="todos"></div>
+    </main>
+  </body>
+</html>

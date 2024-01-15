@@ -103,6 +103,18 @@ class TodoList {
     this._todoProjects.splice(todoProjectId, 1);
   }
 
+  removeTodoProjectByName(todoProjectName) {
+    let currentProjectId = 0;
+
+    for (let project of this._todoProjects) {
+      if (project.title === todoProjectName) {
+        this.removeTodoProject(currentProjectId);
+        break;
+      }
+      currentProjectId++;
+    }
+  }
+
   get todoProjects() {
     return this._todoProjects;
   }
