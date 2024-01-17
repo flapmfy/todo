@@ -1,7 +1,8 @@
-import { update } from './main';
+import { updateInterface } from './main';
 import { Todo, TodoProject, TodoList } from './model';
 
-let currentProjectName = '';
+let currentProjectName = 'Home';
+let currentListName = 'overviewList';
 /////////////////////////////////////////will be deleted/////////////////////////////////////////
 let todo1 = new Todo('Test 1', 'Toto je pouze test', 2025, 1, false);
 let todo2 = new Todo('Test 2', 'Toto je pouze test', 2025, 1, false);
@@ -16,17 +17,31 @@ const todoProject2 = new TodoProject('Práce');
 todoProject2.addTodo(todo3);
 todoProject2.addTodo(todo4);
 
-const list = new TodoList();
-list.addTodoProject(todoProject1);
-list.addTodoProject(todoProject2);
+const projectsList = new TodoList('projectsList');
+projectsList.addTodoProject(todoProject1);
+projectsList.addTodoProject(todoProject2);
+
+const overviewList = new TodoList('overviewList');
+const home = new TodoProject('Home', false);
+const day = new TodoProject('Day', false);
+const week = new TodoProject('Week', false);
+overviewList.addTodoProject(home);
+overviewList.addTodoProject(day);
+overviewList.addTodoProject(week);
+
+const lists = {
+  projectsList,
+  overviewList,
+};
 /////////////////////////////////////////will be deleted/////////////////////////////////////////
 
 function removeProject(projectName) {
-  list.removeTodoProjectByName(projectName);
+  projectsList.removeTodoProjectByName(projectName);
 }
 
 function handleProjectSwitch(e) {
-  currentProjectName = e.currentTarget.innerText;
+  currentProjectName = e.currentTarget.getAttribute('data-project-name');
+  currentListName = e.currentTarget.getAttribute('data-list-name');
   update();
 }
 
@@ -42,4 +57,20 @@ function handleProjectRemove(e) {
   update();
 }
 
-export { handleProjectSwitch, handleProjectRemove, currentProjectName, list };
+function handleProjectAdd(projectName) {
+  if (projectName) {
+    projectsList.addTodoProject(new TodoProject(projectName));
+    update();
+  }
+}
+
+function updateOverviewProjects() {
+  home.todos = lists.projectsList.allTodos;
+}
+
+function update() {
+  updateOverviewProjects();
+  updateInterface();
+}
+
+export { handleProjectSwitch, handleProjectRemove, currentProjectName, handleProjectAdd, lists, currentListName, update };

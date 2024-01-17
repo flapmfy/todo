@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <script type="module" src="/js/main.js" defer></script>
     <title>ToDo</title>
   </head>
@@ -10,21 +11,30 @@
     <main id="app">
       <nav class="primary-nav">
         <div class="logo">MyToDo</div>
-        <div id="overview">
-          <ul>
-            <li><button>Everything</button></li>
-            <li><button>Soon</button></li>
-            <li><button>Week</button></li>
-            <li><button>Finished</button></li>
-            <li>
-              <button>Filler</button>
-            </li>
-          </ul>
+
+        <div id="overview"></div>
+
+        <div class="projects-list">
+          <button class="add-project bold">Add project<span class="material-symbols-outlined"> add </span></button>
+          <div id="projects"></div>
         </div>
-        <div id="projects"></div>
       </nav>
 
-      <div class="todos"></div>
+      <div id="todos-list"></div>
+
+      <div class="modals">
+        <dialog id="projectDialog">
+          <button class="modal-close-btn"><span class="material-symbols-outlined"> close </span></button>
+          <form method="dialog">
+            <h2 class="text-center">Create a project</h2>
+            <div class="form-group">
+              <label for="project-name-input">Project name</label>
+              <input type="text" name="projectName" id="project-name-input" placeholder="Homeworks" required />
+            </div>
+            <button class="button-fill" type="submit">Create</button>
+          </form>
+        </dialog>
+      </div>
     </main>
   </body>
 </html>

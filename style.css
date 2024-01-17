@@ -4,8 +4,11 @@
   --container-breakout: 90ch;
   --container-padding: 2rem;
 
-  --clr-dark-700: rgb(21, 21, 21);
+  --rgb-dark: 0, 0, 0;
+  --clr-dark-700: rgb(30, 30, 30);
   --clr-light-400: rgb(255, 255, 255);
+  --clr-red-400: rgb(255, 0, 0);
+  --clr-accent-400: orange;
 }
 
 /******reset******/
@@ -31,7 +34,6 @@ body {
   min-height: 100vh;
   text-rendering: optimizeSpeed;
   line-height: 1.5;
-  background-color: beige;
 }
 
 a:not([class]) {
@@ -84,6 +86,7 @@ button {
   color: inherit;
   border: none;
   background-color: transparent;
+  line-height: 1;
 }
 
 /******utility classes******/
@@ -136,7 +139,26 @@ button {
   align-items: center;
 }
 
+.bold {
+  font-weight: 700;
+}
+
 /******styling******/
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.button-fill {
+  background-color: var(--clr-accent-400);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+}
+
+.button-fill:hover {
+  filter: brightness(0.95);
+}
+
 header {
   color: var(--clr-light-400);
   background-color: var(--clr-dark-700);
@@ -149,12 +171,10 @@ header {
 }
 
 #app {
+  max-width: 1200px;
+  margin-inline: auto;
   display: grid;
-  grid-template-columns: auto 1fr;
-}
-
-.primary-nav ul {
-  list-style: none;
+  grid-template-columns: 200px 1fr;
 }
 
 .primary-nav {
@@ -162,14 +182,26 @@ header {
   padding-inline: 1rem;
   height: 100vh;
   overflow-y: auto;
-  position: fixed;
+  position: sticky;
+  top: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.primary-nav ul {
+  list-style: none;
+  display: grid;
+  gap: 0.25rem;
 }
 
 .primary-nav button {
+  font-size: 1.25rem;
   line-height: 1;
   text-align: left;
-  width: 100%;
   padding: 0.5rem;
+  width: 100%;
   border-radius: 5px;
 
   display: flex;
@@ -177,8 +209,16 @@ header {
   align-items: center;
 }
 
+.primary-nav .project-button.active {
+  font-weight: 700;
+}
+
+.primary-nav .project-button {
+  position: relative;
+}
+
 .primary-nav button:hover {
-  background-color: rgba(0 0 0 / 0.05);
+  background-color: rgba(var(--rgb-dark), 0.05);
 }
 
 .primary-nav button:hover > .delete-project {
@@ -191,12 +231,13 @@ header {
   display: none;
   position: relative;
   aspect-ratio: 1 / 1;
-  width: 15px;
+  width: 20px;
   border-radius: 2px;
 }
 
-.delete-project:hover {
-  background-color: rgba(0 0 0 / 0.1);
+.delete-project:hover,
+.close-button:hover {
+  background-color: rgba(var(--rgb-dark), 0.1);
 }
 
 .delete-project::before,
@@ -204,9 +245,9 @@ header {
   content: '';
   position: absolute;
   top: calc(50% - var(--line-height));
-  width: 90%;
+  width: 100%;
   height: var(--line-height);
-  background-color: var(--clr-dark-700);
+  background-color: var(--clr-red-400);
 }
 
 .delete-project::before {
@@ -217,6 +258,88 @@ header {
   transform: rotate(-45deg);
 }
 
+.add-project:hover {
+  background-color: white;
+  outline: 1px solid var(--clr-dark-700);
+}
+
+dialog {
+  position: relative;
+  padding: 2rem 1.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  margin-inline: auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+dialog .modal-close-btn {
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  border-radius: 5px;
+}
+
+.modal-close-btn:hover {
+  background-color: rgba(var(--rgb-dark), 0.1);
+}
+
+form {
+  display: grid;
+  gap: 1rem;
+}
+
+.form-group {
+  display: grid;
+  gap: 0.25rem;
+}
+
+input {
+  padding: 0.5rem 1rem;
+}
+
+input::user-invalid + .error,
+input.invalid + .error {
+  display: block;
+}
+
+.error {
+  color: var(--clr-red-400);
+  display: none;
+}
+
+#projects li {
+  margin-left: 1rem;
+}
+
 #overview {
   border-bottom: 1px solid black;
+}
+
+#overview .project-button[data-project-name='Home'] .button-content::before {
+  content: '🏠';
+}
+
+#overview .project-button[data-project-name='Day'] .button-content::before {
+  content: '⌛';
+}
+
+#overview .project-button[data-project-name='Week'] .button-content::before {
+  content: '📅';
+}
+
+#todos-list {
+  background-color: beige;
+  padding: 2rem;
+}
+
+.empty-project {
+  font-size: 3rem;
+  margin-inline: auto;
+  top: 50%;
+  transform: translateY(-50%);
 }

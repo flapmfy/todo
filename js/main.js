@@ -1,10 +1,16 @@
 import '/style.css';
-import { handleProjectSwitch, handleProjectRemove, currentProjectName, list } from './controller';
+import { handleProjectSwitch, handleProjectRemove, currentProjectName, handleProjectAdd, lists, currentListName, update } from './controller';
 
 const appElement = document.querySelector('#app');
-const overviewList = appElement.querySelector('#overview');
-const projectsList = appElement.querySelector('#projects');
-const todosDisplay = appElement.querySelector('.todos');
+const overviewListElement = appElement.querySelector('#overview');
+const projectsListElement = appElement.querySelector('#projects');
+const todosDisplay = appElement.querySelector('#todos-list');
+
+const openProjectDialog = appElement.querySelector('.add-project');
+const addProjectDialog = appElement.querySelector('#projectDialog');
+const addProjectForm = addProjectDialog.querySelector('form');
+const projectNameInput = addProjectDialog.querySelector('#project-name-input');
+const modalCloseButtons = document.querySelectorAll('.modal-close-btn');
 
 //display sorted
 //decide HTML structure
@@ -37,10 +43,6 @@ function setAttributes(htmlElement, attributes) {
   }
 }
 
-// function listAllTodos() {
-//   displayTodos(list.allTodos);
-// }
-
 function createTodo(todoObj, todoId) {
   const todoElement = createElement('div', ['todo']);
   setAttributes(todoElement, { 'data-project': todoObj.parentTitle, 'data-todoId': todoId });
@@ -60,52 +62,110 @@ function displayTodos(todosArray) {
   });
 }
 
-function listProjectTodos(projectName) {
-  let listingProject = list.getTodoProjectByTitle(projectName);
-  displayTodos(listingProject.todos);
+function listProjectTodos(listName, projectName) {
+  if (projectName) {
+    let currentProject = lists[listName].getTodoProjectByTitle(projectName);
+
+    if (!currentProject.isEmpty()) {
+      let listingProject = lists[listName].getTodoProjectByTitle(projectName);
+      displayTodos(listingProject.todos);
+    } else {
+      const emptyProjectElement = createElement('div', ['empty-project'], ':/');
+      todosDisplay.appendChild(emptyProjectElement);
+    }
+  }
+  return;
 }
 
 function createProjectButton(todoProject) {
   const listItem = createElement('li');
   const buttonText = createElement('span', [], todoProject.title);
-
-  const buttonDelete = createElement('span', ['delete-project']);
-  buttonDelete.setAttribute('data-project-name', todoProject.title);
-  buttonDelete.addEventListener('click', handleProjectRemove);
+  buttonText.classList.add('button-content');
 
   const button = createElement('button', ['project-button']);
-  appendElements(button, buttonText, buttonDelete);
+  appendElements(button, buttonText);
   button.setAttribute('data-project-name', todoProject.title);
-  button.addEventListener('click', handleProjectSwitch);
+  button.setAttribute('data-list-name', todoProject.parentList);
+
   listItem.appendChild(button);
+
+  if (todoProject.deletable) {
+    const buttonDelete = createElement('span', ['delete-project']);
+    buttonDelete.setAttribute('data-project-name', todoProject.title);
+    buttonDelete.addEventListener('click', handleProjectRemove);
+    button.appendChild(buttonDelete);
+  }
+
+  button.addEventListener('click', handleProjectSwitch);
 
   return listItem;
 }
 
-function displayProjectButtons() {
+function displayProjectButtons(destElement, todoList) {
   const buttonsList = createElement('ul', ['projects']);
 
-  list.todoProjects.forEach((todoProject) => {
+  todoList.todoProjects.forEach((todoProject) => {
     buttonsList.appendChild(createProjectButton(todoProject));
   });
 
-  projectsList.appendChild(buttonsList);
+  destElement.appendChild(buttonsList);
 }
 
 function clear() {
   todosDisplay.innerHTML = '';
-  projectsList.innerHTML = '';
+  projectsListElement.innerHTML = '';
+  overviewListElement.innerHTML = '';
 }
 
-function update() {
-  console.log(currentProjectName);
-  clear(); //update in future; decide best way for clearing or it it is even needed
-  displayProjectButtons();
-  listProjectTodos(currentProjectName);
+function setActiveButton() {
+  let activeButton = document.querySelector(`[data-project-name="${currentProjectName}"]`);
+  activeButton.classList.add('active');
+}
+
+function updateInterface() {
+  clear(); //updateInterface in future; decide best way for clearing or it it is even needed
+  displayProjectButtons(overviewListElement, lists.overviewList);
+  displayProjectButtons(projectsListElement, lists.projectsList);
+  setActiveButton();
+  listProjectTodos(currentListName, currentProjectName);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  displayProjectButtons();
+  update();
 });
 
-export { update };
+/////////////////////////////////////////modals/////////////////////////////////////////
+modalCloseButtons.forEach((closeButton) => {
+  closeButton.addEventListener('click', (e) => {
+    let dialogToClose = e.currentTarget.closest('dialog');
+    let dialogForm = dialogToClose.querySelector('form');
+    if (dialogForm) {
+      dialogForm.reset();
+    }
+
+    dialogToClose.close();
+  });
+});
+
+////add project////
+openProjectDialog.addEventListener('click', () => {
+  addProjectDialog.showModal();
+});
+
+// addProjectBtn.addEventListener('click', () => {
+//   newProjectName = projectNameInput.value;
+// });
+
+addProjectForm.addEventListener('submit', (e) => {
+  let newProjectName = projectNameInput.value.trim();
+
+  if (!lists.projectsList.projectExists(newProjectName) && !lists.overviewList.projectExists(newProjectName)) {
+    handleProjectAdd(newProjectName);
+    addProjectForm.reset();
+  } else {
+    alert('Project with this name already exists');
+    e.preventDefault();
+  }
+});
+
+export { updateInterface };

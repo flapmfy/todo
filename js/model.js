@@ -62,23 +62,43 @@ class Todo {
   }
 }
 
+///////////////////////////project///////////////////////////
+
 class TodoProject {
-  constructor(title) {
+  constructor(title, deletable = true) {
     this._title = title;
+    this._deletable = deletable;
     this._todos = [];
+    this._parentList;
   }
 
   addTodo(todo) {
     todo.parentTitle = this._title;
-    this._todos.unshift(todo);
+    this._todos.push(todo);
   }
 
   removeTodo(todoId) {
     this._todos.splice(todoId, 1);
   }
 
+  get parentList() {
+    return this._parentList;
+  }
+
+  set parentList(parentName) {
+    this._parentList = parentName;
+  }
+
+  get deletable() {
+    return this._deletable;
+  }
+
   get todos() {
     return this._todos;
+  }
+
+  set todos(todosArray) {
+    this._todos = todosArray;
   }
 
   get title() {
@@ -88,14 +108,23 @@ class TodoProject {
   getTodo(todoId) {
     return this._todos[todoId];
   }
+
+  isEmpty() {
+    return this._todos.length === 0;
+  }
 }
 
+///////////////////////////projects list///////////////////////////
+
 class TodoList {
-  constructor() {
+  constructor(title) {
+    this._title = title;
     this._todoProjects = [];
   }
 
   addTodoProject(todoProject) {
+    if (this.getTodoProjectByTitle(todoProject.title)) return;
+    todoProject.parentList = this._title;
     this._todoProjects.push(todoProject);
   }
 
@@ -104,14 +133,11 @@ class TodoList {
   }
 
   removeTodoProjectByName(todoProjectName) {
-    let currentProjectId = 0;
-
-    for (let project of this._todoProjects) {
-      if (project.title === todoProjectName) {
-        this.removeTodoProject(currentProjectId);
+    for (let i = 0; i < this._todoProjects.length; i++) {
+      if (this._todoProjects[i].title === todoProjectName) {
+        this.removeTodoProject(i);
         break;
       }
-      currentProjectId++;
     }
   }
 
@@ -124,15 +150,28 @@ class TodoList {
   }
 
   getTodoProjectByTitle(todoProjectTitle) {
-    let foundProject;
+    if (todoProjectTitle && this.projectExists(todoProjectTitle)) {
+      let foundProject;
 
-    this._todoProjects.forEach((todoProject) => {
-      if (todoProject.title === todoProjectTitle) {
-        foundProject = todoProject;
+      for (let project of this._todoProjects) {
+        if (project.title === todoProjectTitle) {
+          foundProject = project;
+          break;
+        }
       }
-    });
 
-    return foundProject;
+      return foundProject;
+    }
+    return;
+  }
+
+  projectExists(todoProjectTitle) {
+    for (let project of this._todoProjects) {
+      if (project.title === todoProjectTitle) {
+        return true;
+      }
+    }
+    return false;
   }
 
   get allTodos() {
@@ -143,6 +182,14 @@ class TodoList {
     });
 
     return todos;
+  }
+
+  get title() {
+    return this._title;
+  }
+
+  set title(newTitle) {
+    this._title = newTitle;
   }
 }
 
