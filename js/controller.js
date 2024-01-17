@@ -23,7 +23,7 @@ projectsList.addTodoProject(todoProject2);
 
 const overviewList = new TodoList('overviewList');
 const home = new TodoProject('Home', false);
-const day = new TodoProject('Day', false);
+const day = new TodoProject('Today', false);
 const week = new TodoProject('Week', false);
 overviewList.addTodoProject(home);
 overviewList.addTodoProject(day);
