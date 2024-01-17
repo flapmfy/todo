@@ -8,7 +8,17 @@
   --clr-dark-700: rgb(30, 30, 30);
   --clr-light-400: rgb(255, 255, 255);
   --clr-red-400: rgb(255, 0, 0);
+  --clr-green-400: rgb(0, 128, 0);
+  --clr-orange-400: rgb(255, 165, 0);
+
+  --rgb-red-400: 255, 0, 0;
+  --rgb-green-400: 0, 128, 0;
+  --rgb-orange-400: 255, 165, 0;
+  --rgb-light-400: 255, 255, 255;
+
   --clr-accent-400: orange;
+
+  --shadow-light: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 /******reset******/
@@ -139,6 +149,12 @@ button {
   align-items: center;
 }
 
+.flex-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .bold {
   font-weight: 700;
 }
@@ -265,7 +281,6 @@ header {
 
 dialog {
   position: relative;
-  padding: 2rem 1.5rem;
   border-radius: 0.5rem;
   border: none;
   margin-inline: auto;
@@ -273,14 +288,26 @@ dialog {
   transform: translateY(-50%);
 }
 
+dialog > header {
+  color: var(--clr-light-400);
+  background-color: var(--clr-accent-400);
+  padding: 0.25rem 0.5rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dialog-body {
+  padding: 1rem 2rem;
+}
+
 dialog::backdrop {
   background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
 }
 
 dialog .modal-close-btn {
-  position: absolute;
-  top: 5%;
-  right: 5%;
   border-radius: 5px;
 }
 
@@ -298,8 +325,13 @@ form {
   gap: 0.25rem;
 }
 
-input {
+input,
+textarea {
   padding: 0.5rem 1rem;
+}
+
+textarea {
+  resize: none;
 }
 
 input::user-invalid + .error,
@@ -324,7 +356,7 @@ input.invalid + .error {
   content: '🏠';
 }
 
-#overview .project-button[data-project-name='Day'] .button-content::before {
+#overview .project-button[data-project-name='Today'] .button-content::before {
   content: '⌛';
 }
 
@@ -342,4 +374,55 @@ input.invalid + .error {
   margin-inline: auto;
   top: 50%;
   transform: translateY(-50%);
+}
+
+#add-todo {
+  padding: 1rem;
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  box-shadow: var(--shadow-light);
+}
+
+.low {
+  --clr: var(--rgb-green-400);
+  --bg: var(--rgb-light-400);
+}
+
+.medium {
+  --clr: var(--rgb-orange-400);
+  --bg: var(--rgb-light-400);
+}
+
+.high {
+  --clr: var(--rgb-red-400);
+  --bg: var(--rgb-light-400);
+}
+
+.select-one {
+  padding-block: 0.5rem;
+}
+
+.select-one input[type='radio'] {
+  display: none;
+}
+
+.select-one label {
+  color: rgb(var(--clr));
+  background-color: rgb(var(--bg));
+  border: 2px solid rgb(var(--clr));
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 50ms;
+}
+
+.select-one label:hover {
+  background-color: rgba(var(--clr), 0.1);
+}
+
+.select-one input[type='radio']:checked + label {
+  color: rgb(var(--bg));
+  background-color: rgb(var(--clr));
+  border: 2px solid rgb(var(--bg));
 }

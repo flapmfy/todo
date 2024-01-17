@@ -69,7 +69,6 @@ class TodoProject {
     this._title = title;
     this._deletable = deletable;
     this._todos = [];
-    this._parentList;
   }
 
   addTodo(todo) {
@@ -79,14 +78,6 @@ class TodoProject {
 
   removeTodo(todoId) {
     this._todos.splice(todoId, 1);
-  }
-
-  get parentList() {
-    return this._parentList;
-  }
-
-  set parentList(parentName) {
-    this._parentList = parentName;
   }
 
   get deletable() {
@@ -117,8 +108,7 @@ class TodoProject {
 ///////////////////////////projects list///////////////////////////
 
 class TodoList {
-  constructor(title) {
-    this._title = title;
+  constructor() {
     this._todoProjects = [];
   }
 
@@ -182,14 +172,6 @@ class TodoList {
     });
 
     return todos;
-  }
-
-  get title() {
-    return this._title;
-  }
-
-  set title(newTitle) {
-    this._title = newTitle;
   }
 }
 

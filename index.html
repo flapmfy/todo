@@ -9,6 +9,7 @@
   </head>
   <body>
     <main id="app">
+      <button class="button-fill" id="add-todo"><span class="material-symbols-outlined"> add </span></button>
       <nav class="primary-nav">
         <div class="logo">MyToDo</div>
 
@@ -23,16 +24,65 @@
       <div id="todos-list"></div>
 
       <div class="modals">
-        <dialog id="projectDialog">
-          <button class="modal-close-btn"><span class="material-symbols-outlined"> close </span></button>
-          <form method="dialog">
-            <h2 class="text-center">Create a project</h2>
-            <div class="form-group">
-              <label for="project-name-input">Project name</label>
-              <input type="text" name="projectName" id="project-name-input" placeholder="Homeworks" required />
-            </div>
-            <button class="button-fill" type="submit">Create</button>
-          </form>
+        <dialog id="project-dialog">
+          <header>
+            <div class="dialog-header">Create project</div>
+            <button class="modal-close-btn"><span class="material-symbols-outlined"> close </span></button>
+          </header>
+
+          <div class="dialog-body">
+            <form method="dialog">
+              <div class="form-group">
+                <label for="project-name-input">Project name</label>
+                <input type="text" name="projectName" id="project-name-input" placeholder="Homeworks" required />
+              </div>
+              <button class="button-fill" type="submit">Create</button>
+            </form>
+          </div>
+        </dialog>
+
+        <dialog id="add-dialog">
+          <header>
+            <div class="dialog-header">Add todo</div>
+            <button class="modal-close-btn"><span class="material-symbols-outlined"> close </span></button>
+          </header>
+
+          <div class="dialog-body">
+            <form method="dialog">
+              <div class="form-group">
+                <label for="todo-name-input">Title</label>
+                <input type="text" name="projectName" id="todo-name-input" placeholder="Math" required />
+              </div>
+
+              <div class="form-group">
+                <label for="todo-details-input">Details</label>
+                <textarea name="" id="todo-details-input" cols="30" rows="5"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="todo-duedate-input">Due date</label>
+                <input type="date" name="" id="todo-duedate-input" />
+              </div>
+
+              <div class="flex-group select-one">
+                <div class="low">
+                  <input type="radio" name="priority" id="low" />
+                  <label for="low">Low</label>
+                </div>
+
+                <div class="medium">
+                  <input type="radio" name="priority" id="medium" />
+                  <label for="medium">Medium</label>
+                </div>
+
+                <div class="high">
+                  <input type="radio" name="priority" id="high" />
+                  <label for="high">High</label>
+                </div>
+              </div>
+              <button class="button-fill" type="submit">Create</button>
+            </form>
+          </div>
         </dialog>
       </div>
     </main>

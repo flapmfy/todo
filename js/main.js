@@ -1,5 +1,5 @@
 import '/style.css';
-import { handleProjectSwitch, handleProjectRemove, currentProjectName, handleProjectAdd, lists, currentListName, update } from './controller';
+import { handleProjectSwitch, handleProjectRemove, currentProjectName, handleProjectAdd, projectsList } from './controller';
 
 const appElement = document.querySelector('#app');
 const overviewListElement = appElement.querySelector('#overview');
@@ -7,10 +7,13 @@ const projectsListElement = appElement.querySelector('#projects');
 const todosDisplay = appElement.querySelector('#todos-list');
 
 const openProjectDialog = appElement.querySelector('.add-project');
-const addProjectDialog = appElement.querySelector('#projectDialog');
+const addProjectDialog = appElement.querySelector('#project-dialog');
 const addProjectForm = addProjectDialog.querySelector('form');
 const projectNameInput = addProjectDialog.querySelector('#project-name-input');
 const modalCloseButtons = document.querySelectorAll('.modal-close-btn');
+
+const openAddDialog = appElement.querySelector('#add-todo');
+const addTodoDialog = appElement.querySelector('#add-dialog');
 
 //display sorted
 //decide HTML structure
@@ -62,16 +65,30 @@ function displayTodos(todosArray) {
   });
 }
 
-function listProjectTodos(listName, projectName) {
-  if (projectName) {
-    let currentProject = lists[listName].getTodoProjectByTitle(projectName);
+function handleEmptyProject() {
+  const emptyProjectElement = createElement('div', ['empty-project'], ':/');
+  todosDisplay.appendChild(emptyProjectElement);
+}
 
-    if (!currentProject.isEmpty()) {
-      let listingProject = lists[listName].getTodoProjectByTitle(projectName);
-      displayTodos(listingProject.todos);
+function displayProjectTodos(todoList, projectName) {
+  if (projectName) {
+    let todosArray = [];
+
+    if (projectName === 'Home') {
+      todosArray = todoList.allTodos;
+    } else if (projectName === 'Today') {
+      console.log('Today');
+    } else if (projectName === 'Week') {
+      console.log('Week');
     } else {
-      const emptyProjectElement = createElement('div', ['empty-project'], ':/');
-      todosDisplay.appendChild(emptyProjectElement);
+      let currentProject = todoList.getTodoProjectByTitle(projectName);
+      todosArray = currentProject.todos;
+    }
+
+    if (todosArray.length !== 0) {
+      displayTodos(todosArray);
+    } else {
+      handleEmptyProject();
     }
   }
   return;
@@ -101,14 +118,22 @@ function createProjectButton(todoProject) {
   return listItem;
 }
 
-function displayProjectButtons(destElement, todoList) {
-  const buttonsList = createElement('ul', ['projects']);
+function displayProjectButtons(todoList) {
+  const projectsButtons = createElement('ul', ['projects']);
+  const permanentButtons = createElement('ul', ['projects', 'project--permanent']);
 
   todoList.todoProjects.forEach((todoProject) => {
-    buttonsList.appendChild(createProjectButton(todoProject));
+    let createdButton = createProjectButton(todoProject);
+
+    if (todoProject.deletable) {
+      projectsButtons.appendChild(createdButton);
+    } else {
+      permanentButtons.appendChild(createdButton);
+    }
   });
 
-  destElement.appendChild(buttonsList);
+  overviewListElement.appendChild(permanentButtons);
+  projectsListElement.appendChild(projectsButtons);
 }
 
 function clear() {
@@ -124,14 +149,13 @@ function setActiveButton() {
 
 function updateInterface() {
   clear(); //updateInterface in future; decide best way for clearing or it it is even needed
-  displayProjectButtons(overviewListElement, lists.overviewList);
-  displayProjectButtons(projectsListElement, lists.projectsList);
+  displayProjectButtons(projectsList);
   setActiveButton();
-  listProjectTodos(currentListName, currentProjectName);
+  displayProjectTodos(projectsList, currentProjectName);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  update();
+  updateInterface();
 });
 
 /////////////////////////////////////////modals/////////////////////////////////////////
@@ -159,13 +183,17 @@ openProjectDialog.addEventListener('click', () => {
 addProjectForm.addEventListener('submit', (e) => {
   let newProjectName = projectNameInput.value.trim();
 
-  if (!lists.projectsList.projectExists(newProjectName) && !lists.overviewList.projectExists(newProjectName)) {
+  if (!projectsList.projectExists(newProjectName)) {
     handleProjectAdd(newProjectName);
     addProjectForm.reset();
   } else {
     alert('Project with this name already exists');
     e.preventDefault();
   }
+});
+
+openAddDialog.addEventListener('click', () => {
+  addTodoDialog.showModal();
 });
 
 export { updateInterface };
