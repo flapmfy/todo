@@ -50,8 +50,8 @@
           <div class="dialog-body">
             <form method="dialog">
               <div class="form-group">
-                <label for="todo-name-input">Title</label>
-                <input type="text" name="projectName" id="todo-name-input" placeholder="Math" required />
+                <label for="todo-title-input">Title</label>
+                <input type="text" name="projectName" id="todo-title-input" placeholder="Math" required />
               </div>
 
               <div class="form-group">
@@ -66,21 +66,21 @@
 
               <div class="flex-group select-one">
                 <div class="low">
-                  <input type="radio" name="priority" id="low" />
+                  <input type="radio" name="priority" id="low" value="low" />
                   <label for="low">Low</label>
                 </div>
 
                 <div class="medium">
-                  <input type="radio" name="priority" id="medium" />
+                  <input type="radio" name="priority" id="medium" value="medium" checked />
                   <label for="medium">Medium</label>
                 </div>
 
                 <div class="high">
-                  <input type="radio" name="priority" id="high" />
+                  <input type="radio" name="priority" id="high" value="high" />
                   <label for="high">High</label>
                 </div>
               </div>
-              <button class="button-fill" type="submit">Create</button>
+              <button class="button-fill" type="submit">Add</button>
             </form>
           </div>
         </dialog>

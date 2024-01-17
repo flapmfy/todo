@@ -1,5 +1,5 @@
 import '/style.css';
-import { handleProjectSwitch, handleProjectRemove, currentProjectName, handleProjectAdd, projectsList } from './controller';
+import { handleProjectSwitch, handleProjectRemove, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd } from './controller';
 
 const appElement = document.querySelector('#app');
 const overviewListElement = appElement.querySelector('#overview');
@@ -14,6 +14,11 @@ const modalCloseButtons = document.querySelectorAll('.modal-close-btn');
 
 const openAddDialog = appElement.querySelector('#add-todo');
 const addTodoDialog = appElement.querySelector('#add-dialog');
+const addTodoForm = addTodoDialog.querySelector('form');
+const todoTitleInput = addTodoDialog.querySelector('#todo-title-input');
+const todoDetailsInput = addTodoDialog.querySelector('#todo-details-input');
+const todoDuedateInput = addTodoDialog.querySelector('#todo-duedate-input');
+const todoPriorityInput = addTodoDialog.querySelector('input[name="priority"]:checked');
 
 //display sorted
 //decide HTML structure
@@ -194,6 +199,16 @@ addProjectForm.addEventListener('submit', (e) => {
 
 openAddDialog.addEventListener('click', () => {
   addTodoDialog.showModal();
+});
+
+addTodoForm.addEventListener('submit', () => {
+  let newTodoTitle = todoTitleInput.value;
+  let newTodoDetails = todoDetailsInput.value;
+  let newTodoDuedate = new Date(todoDuedateInput.value);
+  let newTodoPriority = todoPriorityInput.value;
+
+  handleTodoAdd(newTodoTitle, newTodoDetails, newTodoDuedate, newTodoPriority);
+  addTodoForm.reset();
 });
 
 export { updateInterface };

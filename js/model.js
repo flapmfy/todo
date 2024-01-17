@@ -5,7 +5,7 @@ class Todo {
     this._dueDate = dueDate;
     this._priority = priority;
     this._finished = finished;
-    this._dateCreated = new Date().getTime();
+    this._dateCreated = new Date();
     this._parentTitle = '';
   }
 

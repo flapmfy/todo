@@ -56,4 +56,11 @@ function handleProjectAdd(projectName) {
   }
 }
 
-export { handleProjectSwitch, handleProjectRemove, currentProjectName, handleProjectAdd, projectsList };
+function handleTodoAdd(title, details, duedate, priority) {
+  projectsList.getTodoProjectByTitle(currentProjectName).addTodo(new Todo(title, details, duedate, priority));
+  updateInterface();
+}
+
+export { handleProjectSwitch, handleProjectRemove, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd };
+
+console.log(todo1.dateCreated);
