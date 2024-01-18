@@ -65,10 +65,11 @@ class Todo {
 ///////////////////////////project///////////////////////////
 
 class TodoProject {
-  constructor(title, deletable = true) {
+  constructor(title, deletable = true, addingRestricted = false) {
     this._title = title;
     this._deletable = deletable;
     this._todos = [];
+    this._isAddingRestricted = addingRestricted;
   }
 
   addTodo(todo) {
@@ -80,12 +81,21 @@ class TodoProject {
     this._todos.splice(todoId, 1);
   }
 
+  get isAddingRestricted() {
+    return this._isAddingRestricted;
+  }
+
   get deletable() {
     return this._deletable;
   }
 
   get todos() {
     return this._todos;
+  }
+
+  getTodos() {
+    if (this.isEmpty()) return;
+    return this.todos;
   }
 
   set todos(todosArray) {
@@ -168,7 +178,19 @@ class TodoList {
     let todos = [];
 
     this._todoProjects.forEach((todoProject) => {
-      todos = [...todos, ...todoProject.todos];
+      if (!todoProject.isEmpty() && !todoProject.isAddingRestricted) {
+        todos = [...todos, todoProject.todos];
+      }
+    });
+
+    return todos;
+  }
+
+  get allTodosAsArray() {
+    let todos = [];
+
+    this.allTodos.forEach((todosArray) => {
+      todos = [...todos, ...todosArray];
     });
 
     return todos;

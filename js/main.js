@@ -1,5 +1,5 @@
 import '/style.css';
-import { handleProjectSwitch, handleProjectRemove, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd } from './controller';
+import { handleProjectSwitch, handleProjectRemove, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd, updateList } from './controller';
 
 const appElement = document.querySelector('#app');
 const overviewListElement = appElement.querySelector('#overview');
@@ -74,9 +74,11 @@ function createTodo(todoObj, todoId) {
   return todoElement;
 }
 
-function displayTodos(todosArray) {
-  todosArray.forEach((todo, id) => {
-    todosDisplay.appendChild(createTodo(todo, id));
+function displayTodos(todosArrays) {
+  todosArrays.forEach((todosArray) => {
+    todosArray.forEach((todo, id) => {
+      todosDisplay.appendChild(createTodo(todo, id));
+    });
   });
 }
 
@@ -87,23 +89,20 @@ function handleEmptyProject() {
 
 function displayProjectTodos(todoList, projectName) {
   if (projectName) {
-    let todosArray = [];
+    let todosArrays = [];
+    let currentProject = todoList.getTodoProjectByTitle(projectName);
 
     if (projectName === 'Home') {
-      todosArray = todoList.allTodos;
-    } else if (projectName === 'Today') {
-      console.log('Today');
-      hideElement(openAddDialog);
-    } else if (projectName === 'Week') {
-      console.log('Week');
-      hideElement(openAddDialog);
+      todosArrays = todoList.allTodos;
     } else {
-      let currentProject = todoList.getTodoProjectByTitle(projectName);
-      todosArray = currentProject.todos;
+      if (currentProject.isAddingRestricted) {
+        hideElement(openAddDialog);
+      }
+      todosArrays.push(currentProject.todos);
     }
 
-    if (todosArray.length !== 0) {
-      displayTodos(todosArray);
+    if (todosArrays.length !== 0) {
+      displayTodos(todosArrays);
     } else {
       handleEmptyProject();
     }
@@ -168,13 +167,14 @@ function setActiveButton() {
 
 function updateInterface() {
   clear(); //updateInterface in future; decide best way for clearing or it it is even needed
+  showElement(openAddDialog);
   displayProjectButtons(projectsList);
   displayProjectTodos(projectsList, currentProjectName);
-  showElement(openAddDialog);
   setActiveButton();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  updateList();
   updateInterface();
 });
 
