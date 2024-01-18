@@ -4,10 +4,10 @@ import { Todo, TodoProject, TodoList } from './model';
 let currentProjectName = 'Home';
 const currentDate = new Date();
 /////////////////////////////////////////will be deleted/////////////////////////////////////////
-let todo1 = new Todo('Zítra', 'Toto je pouze test', new Date('January 19, 2024 03:24:00'), 1, false);
-let todo2 = new Todo('V týdnu', 'Toto je pouze test', new Date('January 23, 2024 03:24:00'), 1, false);
-let todo3 = new Todo('Dnes', 'Toto je pouze test', new Date('January 18, 2024 03:24:00'), 1, false);
-let todo4 = new Todo('Déle jak týden', 'Toto je pouze test', new Date('January 30, 2024 03:24:00'), 1, false);
+let todo1 = new Todo('Zítra', 'Toto je pouze test', new Date('January 19, 2024 03:24:00'), 'low', false);
+let todo2 = new Todo('V týdnu', 'Toto je pouze test', new Date('January 23, 2024 03:24:00'), 'low', false);
+let todo3 = new Todo('Dnes', 'Toto je pouze test', new Date('January 18, 2024 03:24:00'), 'medium', false);
+let todo4 = new Todo('Déle jak týden', 'Toto je pouze test', new Date('January 30, 2024 03:24:00'), 'high', false);
 
 const todoProject1 = new TodoProject('Škola');
 todoProject1.addTodo(todo1);
@@ -35,18 +35,11 @@ function handleProjectSwitch(e) {
 }
 
 function removeProject(projectName) {
-  projectsList.removeTodoProjectByName(projectName);
-}
-
-function handleProjectRemove(e) {
-  e.stopPropagation();
-  let projectNameToRemove = e.currentTarget.getAttribute('data-project-name');
-
-  if (projectNameToRemove === currentProjectName) {
+  if (projectName === currentProjectName) {
     currentProjectName = 'Home';
   }
 
-  removeProject(projectNameToRemove);
+  projectsList.removeTodoProjectByName(projectName);
   updateList();
   updateInterface();
 }
@@ -69,8 +62,11 @@ function dueInNumberOfDays(days) {
   let daysInMiliseconds = days * 24 * 60 * 60 * 1000;
 
   return function (todo) {
-    let timeDiff = todo.dueDate - currentDate;
-    return timeDiff > 0 && timeDiff < daysInMiliseconds;
+    if (todo.dueDate) {
+      let timeDiff = todo.dueDate - currentDate;
+      return timeDiff > 0 && timeDiff < daysInMiliseconds;
+    }
+    return false;
   };
 }
 
@@ -82,4 +78,4 @@ function updateList() {
   week.todos = projectsList.allTodosAsArray.filter(hasWeekLeft);
 }
 
-export { handleProjectSwitch, handleProjectRemove, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd, hasDayLeft, hasWeekLeft, updateList };
+export { handleProjectSwitch, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd, hasDayLeft, hasWeekLeft, updateList, removeProject };

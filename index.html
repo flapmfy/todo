@@ -24,6 +24,21 @@
       <div id="todos-list"></div>
 
       <div class="modals">
+        <dialog id="warn-dialog">
+          <header>
+            <div class="dialog-header">Delete project</div>
+            <button class="modal-close-btn"><span class="material-symbols-outlined"> close </span></button>
+          </header>
+
+          <div class="text-center">
+            <div class="dialog-body">
+              <p>This project isn't empty. All todos will be removed with it.</p>
+            </div>
+
+            <button class="button-fill" id="remove-project">Remove</button>
+          </div>
+        </dialog>
+
         <dialog id="project-dialog">
           <header>
             <div class="dialog-header">Create project</div>
@@ -71,7 +86,7 @@
                 </div>
 
                 <div class="medium">
-                  <input type="radio" name="priority" id="medium" value="medium" checked />
+                  <input type="radio" name="priority" id="medium" value="medium" />
                   <label for="medium">Medium</label>
                 </div>
 

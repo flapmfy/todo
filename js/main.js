@@ -1,5 +1,5 @@
 import '/style.css';
-import { handleProjectSwitch, handleProjectRemove, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd, updateList } from './controller';
+import { handleProjectSwitch, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd, updateList, removeProject } from './controller';
 
 const appElement = document.querySelector('#app');
 const overviewListElement = appElement.querySelector('#overview');
@@ -18,7 +18,10 @@ const addTodoForm = addTodoDialog.querySelector('form');
 const todoTitleInput = addTodoDialog.querySelector('#todo-title-input');
 const todoDetailsInput = addTodoDialog.querySelector('#todo-details-input');
 const todoDuedateInput = addTodoDialog.querySelector('#todo-duedate-input');
-const todoPriorityInput = addTodoDialog.querySelector('input[name="priority"]:checked');
+const todoPriorityRadios = addTodoDialog.querySelectorAll('input[name="priority"]');
+
+const warnDialog = appElement.querySelector('#warn-dialog');
+const confirmDeletionButton = warnDialog.querySelector('#remove-project');
 
 //display sorted
 //decide HTML structure
@@ -31,6 +34,8 @@ const todoPriorityInput = addTodoDialog.querySelector('input[name="priority"]:ch
 
 //* try drag and drop for reordering todos */
 //* add calendar for picking due date of todo */
+
+let projectNameToRemove = '';
 
 /////////////////////////////////////////helpers/////////////////////////////////////////
 function createElement(elementName, classes = [], content = '') {
@@ -63,7 +68,7 @@ function showElement(element) {
 /////////////////////////////////////////todos/////////////////////////////////////////
 function createTodo(todoObj, todoId) {
   const todoElement = createElement('div', ['todo']);
-  setAttributes(todoElement, { 'data-project': todoObj.parentTitle, 'data-todoId': todoId });
+  setAttributes(todoElement, { 'data-project': todoObj.parentTitle, 'data-todoId': todoId, 'data-priority': todoObj.priority });
 
   const todoElementContent = createElement('div');
   const todoTitle = createElement('div', ['todo__title'], `${todoObj.title}, ${todoObj.parentTitle}, ${todoId}`);
@@ -111,6 +116,19 @@ function displayProjectTodos(todoList, projectName) {
 }
 
 /////////////////////////////////////////projects tabs/////////////////////////////////////////
+
+function handleProjectRemove(e) {
+  e.stopPropagation();
+  let removingProjectName = e.currentTarget.getAttribute('data-project-name');
+
+  if (!projectsList.getTodoProjectByTitle(removingProjectName).isEmpty()) {
+    projectNameToRemove = removingProjectName;
+    warnDialog.showModal();
+  } else {
+    removeProject(removingProjectName);
+  }
+}
+
 function createProjectButton(todoProject) {
   const listItem = createElement('li');
   const buttonText = createElement('span', [], todoProject.title);
@@ -217,10 +235,25 @@ addTodoForm.addEventListener('submit', () => {
   let newTodoTitle = todoTitleInput.value;
   let newTodoDetails = todoDetailsInput.value;
   let newTodoDuedate = new Date(todoDuedateInput.value);
-  let newTodoPriority = todoPriorityInput.value;
+  let newTodoPriority = 'unset';
+
+  //last change
+  for (let priorityRadio of todoPriorityRadios) {
+    if (priorityRadio.checked) {
+      console.log(priorityRadio);
+      newTodoPriority = priorityRadio.value;
+    }
+  }
+
+  console.log(newTodoPriority);
 
   handleTodoAdd(newTodoTitle, newTodoDetails, newTodoDuedate, newTodoPriority);
   addTodoForm.reset();
+});
+
+confirmDeletionButton.addEventListener('click', () => {
+  removeProject(projectNameToRemove);
+  warnDialog.close();
 });
 
 export { updateInterface };
