@@ -371,6 +371,7 @@ input.invalid + .error {
 
 .empty-project {
   font-size: 3rem;
+  text-align: center;
   margin-inline: auto;
   top: 50%;
   transform: translateY(-50%);
@@ -425,4 +426,21 @@ input.invalid + .error {
   color: rgb(var(--bg));
   background-color: rgb(var(--clr));
   border: 2px solid rgb(var(--bg));
+}
+
+.todo {
+  background-color: var(--clr-light-400);
+  padding: 0.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 200ms;
+}
+
+.todo:hover {
+  box-shadow: var(--shadow-light);
+  transform: scale(101%);
+}
+
+.todo + .todo {
+  margin-top: 1rem;
 }

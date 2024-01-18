@@ -73,7 +73,7 @@ class TodoProject {
 
   addTodo(todo) {
     todo.parentTitle = this._title;
-    this._todos.push(todo);
+    this._todos.unshift(todo);
   }
 
   removeTodo(todoId) {

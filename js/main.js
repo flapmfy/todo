@@ -32,6 +32,7 @@ const todoPriorityInput = addTodoDialog.querySelector('input[name="priority"]:ch
 //* try drag and drop for reordering todos */
 //* add calendar for picking due date of todo */
 
+/////////////////////////////////////////helpers/////////////////////////////////////////
 function createElement(elementName, classes = [], content = '') {
   const htmlElement = document.createElement(elementName);
   htmlElement.innerText = content;
@@ -51,12 +52,21 @@ function setAttributes(htmlElement, attributes) {
   }
 }
 
+function hideElement(element) {
+  element.style.display = 'none';
+}
+
+function showElement(element) {
+  element.style.display = 'block';
+}
+
+/////////////////////////////////////////todos/////////////////////////////////////////
 function createTodo(todoObj, todoId) {
   const todoElement = createElement('div', ['todo']);
   setAttributes(todoElement, { 'data-project': todoObj.parentTitle, 'data-todoId': todoId });
 
   const todoElementContent = createElement('div');
-  const todoTitle = createElement('div', ['todo__title'], todoObj.title);
+  const todoTitle = createElement('div', ['todo__title'], `${todoObj.title}, ${todoObj.parentTitle}, ${todoId}`);
   const todoDescription = createElement('div', ['todo__description'], todoObj.description);
   appendElements(todoElementContent, todoTitle, todoDescription);
   todoElement.appendChild(todoElementContent);
@@ -83,8 +93,10 @@ function displayProjectTodos(todoList, projectName) {
       todosArray = todoList.allTodos;
     } else if (projectName === 'Today') {
       console.log('Today');
+      hideElement(openAddDialog);
     } else if (projectName === 'Week') {
       console.log('Week');
+      hideElement(openAddDialog);
     } else {
       let currentProject = todoList.getTodoProjectByTitle(projectName);
       todosArray = currentProject.todos;
@@ -99,6 +111,7 @@ function displayProjectTodos(todoList, projectName) {
   return;
 }
 
+/////////////////////////////////////////projects tabs/////////////////////////////////////////
 function createProjectButton(todoProject) {
   const listItem = createElement('li');
   const buttonText = createElement('span', [], todoProject.title);
@@ -141,6 +154,7 @@ function displayProjectButtons(todoList) {
   projectsListElement.appendChild(projectsButtons);
 }
 
+/////////////////////////////////////////handling changes/////////////////////////////////////////
 function clear() {
   todosDisplay.innerHTML = '';
   projectsListElement.innerHTML = '';
@@ -155,8 +169,9 @@ function setActiveButton() {
 function updateInterface() {
   clear(); //updateInterface in future; decide best way for clearing or it it is even needed
   displayProjectButtons(projectsList);
-  setActiveButton();
   displayProjectTodos(projectsList, currentProjectName);
+  showElement(openAddDialog);
+  setActiveButton();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -176,14 +191,10 @@ modalCloseButtons.forEach((closeButton) => {
   });
 });
 
-////add project////
+////add project modal////
 openProjectDialog.addEventListener('click', () => {
   addProjectDialog.showModal();
 });
-
-// addProjectBtn.addEventListener('click', () => {
-//   newProjectName = projectNameInput.value;
-// });
 
 addProjectForm.addEventListener('submit', (e) => {
   let newProjectName = projectNameInput.value.trim();
@@ -197,6 +208,7 @@ addProjectForm.addEventListener('submit', (e) => {
   }
 });
 
+////add todo modal////
 openAddDialog.addEventListener('click', () => {
   addTodoDialog.showModal();
 });
