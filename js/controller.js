@@ -47,6 +47,7 @@ function removeProject(projectName) {
 function handleProjectAdd(projectName) {
   if (projectName) {
     projectsList.addTodoProject(new TodoProject(projectName));
+    currentProjectName = projectName;
     updateList();
     updateInterface();
   }

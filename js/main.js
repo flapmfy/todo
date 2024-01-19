@@ -87,8 +87,32 @@ function displayTodos(todosArrays) {
   });
 }
 
-function handleEmptyProject() {
-  const emptyProjectElement = createElement('div', ['empty-project'], ':/');
+function displayProjectTitle(project) {
+  const title = createElement('h2', ['project-header'], project.title);
+  todosDisplay.appendChild(title);
+}
+
+function handleEmptyProject(project) {
+  const emptyProjectElement = createElement('div', ['empty-project'], 'This project is empty. Decide what to do with it');
+  const actionButtons = createElement('div', ['empty-project-buttons']);
+
+  if (project.deletable) {
+    const deleteButton = createElement('button', ['button-fill'], 'Remove');
+    deleteButton.addEventListener('click', () => removeProject(project.title));
+    actionButtons.appendChild(deleteButton);
+  }
+
+  if (!project.isAddingRestricted) {
+    const addTodoButton = createElement('button', ['button-fill'], 'Create todo');
+    addTodoButton.addEventListener('click', () => {
+      addTodoDialog.showModal();
+    });
+    actionButtons.appendChild(addTodoButton);
+  } else {
+    emptyProjectElement.innerHTML = 'No reason to stress';
+  }
+
+  emptyProjectElement.appendChild(actionButtons);
   todosDisplay.appendChild(emptyProjectElement);
 }
 
@@ -103,13 +127,18 @@ function displayProjectTodos(todoList, projectName) {
       if (currentProject.isAddingRestricted) {
         hideElement(openAddDialog);
       }
-      todosArrays.push(currentProject.todos);
+
+      if (!currentProject.isEmpty()) {
+        todosArrays.push(currentProject.todos);
+      }
     }
+
+    displayProjectTitle(currentProject);
 
     if (todosArrays.length !== 0) {
       displayTodos(todosArrays);
     } else {
-      handleEmptyProject();
+      handleEmptyProject(currentProject);
     }
   }
   return;
@@ -237,15 +266,11 @@ addTodoForm.addEventListener('submit', () => {
   let newTodoDuedate = new Date(todoDuedateInput.value);
   let newTodoPriority = 'unset';
 
-  //last change
   for (let priorityRadio of todoPriorityRadios) {
     if (priorityRadio.checked) {
-      console.log(priorityRadio);
       newTodoPriority = priorityRadio.value;
     }
   }
-
-  console.log(newTodoPriority);
 
   handleTodoAdd(newTodoTitle, newTodoDetails, newTodoDuedate, newTodoPriority);
   addTodoForm.reset();

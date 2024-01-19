@@ -44,6 +44,7 @@ body {
   min-height: 100vh;
   text-rendering: optimizeSpeed;
   line-height: 1.5;
+  background-color: var(--clr-dark-700);
 }
 
 a:not([class]) {
@@ -184,6 +185,7 @@ header {
 .logo {
   font-size: 2rem;
   font-weight: 700;
+  pointer-events: none;
 }
 
 #app {
@@ -225,12 +227,20 @@ header {
   align-items: center;
 }
 
-.primary-nav .project-button.active {
-  font-weight: 700;
-}
-
 .primary-nav .project-button {
   position: relative;
+}
+
+.project-button > .button-content {
+  max-width: 125px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.primary-nav .project-button.active {
+  color: var(--clr-orange-400);
+  font-weight: 700;
 }
 
 .primary-nav button:hover {
@@ -281,8 +291,8 @@ header {
 
 dialog {
   position: relative;
-  border-radius: 0.5rem;
   border: none;
+  border-radius: 0.5rem;
   margin-inline: auto;
   top: 50%;
   transform: translateY(-50%);
@@ -370,11 +380,8 @@ input.invalid + .error {
 }
 
 .empty-project {
-  font-size: 3rem;
+  font-size: 1.5rem;
   text-align: center;
-  margin-inline: auto;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
 #add-todo {
@@ -449,6 +456,10 @@ input.invalid + .error {
   --clr: var(--rgb-red-400);
 }
 
+.todo[data-priority='unset'] {
+  --clr: 0, 0, 0, 0;
+}
+
 .todo:hover {
   box-shadow: var(--shadow-light);
   transform: scale(101%);
@@ -456,4 +467,15 @@ input.invalid + .error {
 
 .todo + .todo {
   margin-top: 1rem;
+}
+
+.project-header {
+  border-bottom: 1px solid var(--clr-dark-700);
+  margin-bottom: 1.5rem;
+}
+
+.empty-project-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
 }
