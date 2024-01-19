@@ -5,7 +5,7 @@ class Todo {
     this._dueDate = dueDate;
     this._priority = priority;
     this._finished = finished;
-    this._dateCreated = new Date().getTime();
+    this._dateCreated = new Date();
     this._parentTitle = '';
   }
 
@@ -62,10 +62,14 @@ class Todo {
   }
 }
 
+///////////////////////////project///////////////////////////
+
 class TodoProject {
-  constructor(title) {
+  constructor(title, deletable = true, addingRestricted = false) {
     this._title = title;
+    this._deletable = deletable;
     this._todos = [];
+    this._isAddingRestricted = addingRestricted;
   }
 
   addTodo(todo) {
@@ -77,8 +81,25 @@ class TodoProject {
     this._todos.splice(todoId, 1);
   }
 
+  get isAddingRestricted() {
+    return this._isAddingRestricted;
+  }
+
+  get deletable() {
+    return this._deletable;
+  }
+
   get todos() {
     return this._todos;
+  }
+
+  getTodos() {
+    if (this.isEmpty()) return;
+    return this.todos;
+  }
+
+  set todos(todosArray) {
+    this._todos = todosArray;
   }
 
   get title() {
@@ -88,7 +109,13 @@ class TodoProject {
   getTodo(todoId) {
     return this._todos[todoId];
   }
+
+  isEmpty() {
+    return this._todos.length === 0;
+  }
 }
+
+///////////////////////////projects list///////////////////////////
 
 class TodoList {
   constructor() {
@@ -96,11 +123,22 @@ class TodoList {
   }
 
   addTodoProject(todoProject) {
+    if (this.getTodoProjectByTitle(todoProject.title)) return;
+    todoProject.parentList = this._title;
     this._todoProjects.push(todoProject);
   }
 
   removeTodoProject(todoProjectId) {
     this._todoProjects.splice(todoProjectId, 1);
+  }
+
+  removeTodoProjectByName(todoProjectName) {
+    for (let i = 0; i < this._todoProjects.length; i++) {
+      if (this._todoProjects[i].title === todoProjectName) {
+        this.removeTodoProject(i);
+        break;
+      }
+    }
   }
 
   get todoProjects() {
@@ -112,22 +150,47 @@ class TodoList {
   }
 
   getTodoProjectByTitle(todoProjectTitle) {
-    let foundProject;
+    if (todoProjectTitle && this.projectExists(todoProjectTitle)) {
+      let foundProject;
 
-    this._todoProjects.forEach((todoProject) => {
-      if (todoProject.title === todoProjectTitle) {
-        foundProject = todoProject;
+      for (let project of this._todoProjects) {
+        if (project.title === todoProjectTitle) {
+          foundProject = project;
+          break;
+        }
       }
-    });
 
-    return foundProject;
+      return foundProject;
+    }
+    return;
+  }
+
+  projectExists(todoProjectTitle) {
+    for (let project of this._todoProjects) {
+      if (project.title === todoProjectTitle) {
+        return true;
+      }
+    }
+    return false;
   }
 
   get allTodos() {
     let todos = [];
 
     this._todoProjects.forEach((todoProject) => {
-      todos = [...todos, ...todoProject.todos];
+      if (!todoProject.isEmpty() && !todoProject.isAddingRestricted) {
+        todos = [...todos, todoProject.todos];
+      }
+    });
+
+    return todos;
+  }
+
+  get allTodosAsArray() {
+    let todos = [];
+
+    this.allTodos.forEach((todosArray) => {
+      todos = [...todos, ...todosArray];
     });
 
     return todos;
