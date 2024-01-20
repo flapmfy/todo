@@ -1,5 +1,5 @@
 import '/style.css';
-import { handleProjectSwitch, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd, updateList, removeProject } from './controller';
+import { handleProjectSwitch, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd, updateList, removeProject, handleTodoCheck } from './controller';
 
 const appElement = document.querySelector('#app');
 const overviewListElement = appElement.querySelector('#overview');
@@ -70,12 +70,22 @@ function createTodo(todoObj, todoId) {
   const todoElement = createElement('div', ['todo']);
   setAttributes(todoElement, { 'data-project': todoObj.parentTitle, 'data-todoId': todoId, 'data-priority': todoObj.priority });
 
+  const todoActions = createElement('div', ['todo-actions']);
+  const checkBox = createElement('input');
+  checkBox.setAttribute('type', 'checkbox');
+  checkBox.addEventListener('click', handleTodoCheck);
+  todoActions.appendChild(checkBox);
+
   const todoElementContent = createElement('div');
   const todoTitle = createElement('div', ['todo__title'], `${todoObj.title}, ${todoObj.parentTitle}, ${todoId}`);
   const todoDescription = createElement('div', ['todo__description'], todoObj.description);
   appendElements(todoElementContent, todoTitle, todoDescription);
-  todoElement.appendChild(todoElementContent);
 
+  if (todoObj.finished) {
+    checkBox.setAttribute('checked', true);
+  }
+
+  appendElements(todoElement, todoElementContent, todoActions);
   return todoElement;
 }
 

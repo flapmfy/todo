@@ -28,6 +28,21 @@ projectsList.addTodoProject(week);
 projectsList.addTodoProject(todoProject1);
 projectsList.addTodoProject(todoProject2);
 /////////////////////////////////////////will be deleted/////////////////////////////////////////
+function handleTodoCheck(e) {
+  const checkBox = e.currentTarget;
+  const todoElement = checkBox.closest('.todo');
+
+  changeTodoStatus(todoElement);
+  updateInterface();
+}
+
+function changeTodoStatus(todoElement) {
+  const projectObj = projectsList.getTodoProjectByTitle(todoElement.getAttribute('data-project'));
+  const todoId = todoElement.getAttribute('data-todoid');
+  const todoObj = projectObj.getTodo(todoId);
+
+  todoObj.finished = !todoObj.finished;
+}
 
 function handleProjectSwitch(e) {
   currentProjectName = e.currentTarget.getAttribute('data-project-name');
@@ -79,4 +94,4 @@ function updateList() {
   week.todos = projectsList.allTodosAsArray.filter(hasWeekLeft);
 }
 
-export { handleProjectSwitch, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd, hasDayLeft, hasWeekLeft, updateList, removeProject };
+export { handleProjectSwitch, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd, hasDayLeft, hasWeekLeft, updateList, removeProject, handleTodoCheck };

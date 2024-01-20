@@ -444,6 +444,17 @@ input.invalid + .error {
   transition: transform 200ms;
 }
 
+.todo input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.todo:has(input[type='checkbox']:checked) {
+  color: grey;
+  text-decoration: line-through;
+}
+
 .todo[data-priority='low'] {
   --clr: var(--rgb-green-400);
 }
