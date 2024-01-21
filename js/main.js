@@ -1,5 +1,5 @@
 import '/style.css';
-import { handleProjectSwitch, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd, updateList, removeProject, handleTodoCheck } from './controller';
+import { handleProjectSwitch, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd, removeProject, handleTodoCheck, currentDate } from './controller';
 
 const appElement = document.querySelector('#app');
 const overviewListElement = appElement.querySelector('#overview');
@@ -25,11 +25,6 @@ const confirmDeletionButton = warnDialog.querySelector('#remove-project');
 
 //display sorted
 //decide HTML structure
-//add checkboxes for each todo, import something for working with dates
-//add interface for adding projects and todos to them
-//what will happen if user removes current project
-//add default projects for todos (all, finished, due soon, notes?)
-//save to local browser storage
 //refactor, SOLID principles
 
 //* try drag and drop for reordering todos */
@@ -66,34 +61,35 @@ function showElement(element) {
 }
 
 /////////////////////////////////////////todos/////////////////////////////////////////
-function createTodo(todoObj, todoId) {
+function createTodo(todoObj) {
   const todoElement = createElement('div', ['todo']);
-  setAttributes(todoElement, { 'data-project': todoObj.parentTitle, 'data-todoId': todoId, 'data-priority': todoObj.priority });
-
+  const todoElementContent = createElement('div', ['todo__content']);
   const todoActions = createElement('div', ['todo-actions']);
+  setAttributes(todoElement, { 'data-project': todoObj.parentTitle, 'data-todoId': todoObj.todoId, 'data-priority': todoObj.priority });
+
   const checkBox = createElement('input');
   checkBox.setAttribute('type', 'checkbox');
   checkBox.addEventListener('click', handleTodoCheck);
-  todoActions.appendChild(checkBox);
+  todoElementContent.appendChild(checkBox);
 
-  const todoElementContent = createElement('div');
-  const todoTitle = createElement('div', ['todo__title'], `${todoObj.title}, ${todoObj.parentTitle}, ${todoId}`);
-  const todoDescription = createElement('div', ['todo__description'], todoObj.description);
-  appendElements(todoElementContent, todoTitle, todoDescription);
+  const todoTitle = createElement('div', ['todo__title'], `${todoObj.title}`);
+  appendElements(todoElementContent, todoTitle);
 
   if (todoObj.finished) {
     checkBox.setAttribute('checked', true);
+  }
+
+  if (todoObj.isDue(currentDate) && !todoObj.finished) {
+    todoElement.classList.add('due');
   }
 
   appendElements(todoElement, todoElementContent, todoActions);
   return todoElement;
 }
 
-function displayTodos(todosArrays) {
-  todosArrays.forEach((todosArray) => {
-    todosArray.forEach((todo, id) => {
-      todosDisplay.appendChild(createTodo(todo, id));
-    });
+function displayTodos(todosArray) {
+  todosArray.forEach((todo) => {
+    todosDisplay.appendChild(createTodo(todo));
   });
 }
 
@@ -128,25 +124,25 @@ function handleEmptyProject(project) {
 
 function displayProjectTodos(todoList, projectName) {
   if (projectName) {
-    let todosArrays = [];
+    let todosArray = [];
     let currentProject = todoList.getTodoProjectByTitle(projectName);
 
     if (projectName === 'Home') {
-      todosArrays = todoList.allTodos;
+      todosArray = todoList.allTodos;
     } else {
       if (currentProject.isAddingRestricted) {
         hideElement(openAddDialog);
       }
 
       if (!currentProject.isEmpty()) {
-        todosArrays.push(currentProject.todos);
+        todosArray = [...todosArray, ...currentProject.todos];
       }
     }
 
     displayProjectTitle(currentProject);
 
-    if (todosArrays.length !== 0) {
-      displayTodos(todosArrays);
+    if (todosArray.length !== 0) {
+      displayTodos(todosArray);
     } else {
       handleEmptyProject(currentProject);
     }
@@ -223,7 +219,7 @@ function setActiveButton() {
 }
 
 function updateInterface() {
-  clear(); //updateInterface in future; decide best way for clearing or it it is even needed
+  clear();
   showElement(openAddDialog);
   displayProjectButtons(projectsList);
   displayProjectTodos(projectsList, currentProjectName);
@@ -231,7 +227,6 @@ function updateInterface() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  updateList();
   updateInterface();
 });
 
