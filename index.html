@@ -9,19 +9,27 @@
   </head>
   <body>
     <main id="app">
-      <button class="button-fill" id="add-todo"><span class="material-symbols-outlined"> add </span></button>
-      <nav class="primary-nav">
-        <div class="logo">MyToDo</div>
-
-        <div id="overview"></div>
-
-        <div class="projects-list">
-          <button class="add-project bold">Add project<span class="material-symbols-outlined"> add </span></button>
-          <div id="projects"></div>
+      <header>
+        <div class="container flex-repel">
+          <div class="logo">MyToDo</div>
+          <button class="hamburget-button">button</button>
         </div>
-      </nav>
+      </header>
 
-      <div id="todos-list"></div>
+      <div class="app-body">
+        <nav class="primary-nav">
+          <div id="overview"></div>
+
+          <div class="projects-list">
+            <button class="add-project bold">Add project<span class="material-symbols-outlined"> add </span></button>
+            <div id="projects"></div>
+          </div>
+        </nav>
+
+        <div id="todos-list"></div>
+
+        <button class="button-fill" id="add-todo"><span class="material-symbols-outlined"> add </span></button>
+      </div>
 
       <div class="modals">
         <dialog id="warn-dialog">
