@@ -1,5 +1,5 @@
 import '/style.css';
-import { handleProjectSwitch, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd, removeProject, handleTodoCheck, currentDate } from './controller';
+import { handleProjectSwitch, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd, removeProject, handleTodoCheck, handleTodoDelete } from './controller';
 
 const appElement = document.querySelector('#app');
 const overviewListElement = appElement.querySelector('#overview');
@@ -22,6 +22,8 @@ const todoPriorityRadios = addTodoDialog.querySelectorAll('input[name="priority"
 
 const warnDialog = appElement.querySelector('#warn-dialog');
 const confirmDeletionButton = warnDialog.querySelector('#remove-project');
+
+const detailsDialog = appElement.querySelector('#details-dialog');
 
 //display sorted
 //decide HTML structure
@@ -46,12 +48,6 @@ function appendElements(htmlElement, ...elements) {
   });
 }
 
-function setAttributes(htmlElement, attributes) {
-  for (let attribute in attributes) {
-    htmlElement.setAttribute(attribute, attributes[attribute]);
-  }
-}
-
 function hideElement(element) {
   element.style.display = 'none';
 }
@@ -62,24 +58,34 @@ function showElement(element) {
 
 /////////////////////////////////////////todos/////////////////////////////////////////
 function createTodo(todoObj) {
-  const todoElement = createElement('div', ['todo']);
+  const todoElement = createElement('div', ['todo', 'flex-repel']);
   const todoElementContent = createElement('div', ['todo__content']);
-  const todoActions = createElement('div', ['todo-actions']);
-  setAttributes(todoElement, { 'data-project': todoObj.parentTitle, 'data-todoId': todoObj.todoId, 'data-priority': todoObj.priority });
+  const todoActions = createElement('div', ['todo-actions', 'flex-group']);
+  todoElement.setAttribute('data-priority', todoObj.priority);
 
   const checkBox = createElement('input');
   checkBox.setAttribute('type', 'checkbox');
-  checkBox.addEventListener('click', handleTodoCheck);
+  checkBox.addEventListener('click', () => handleTodoCheck(todoObj));
   todoElementContent.appendChild(checkBox);
 
   const todoTitle = createElement('div', ['todo__title'], `${todoObj.title}`);
   appendElements(todoElementContent, todoTitle);
 
+  const detailsButton = createElement('button', ['icon-button']);
+  detailsButton.innerHTML = '<span class="material-symbols-outlined icon">info</span>';
+  detailsButton.addEventListener('click', () => showDetailsDialog(todoObj));
+  todoActions.appendChild(detailsButton);
+
+  const deleteButton = createElement('button', ['icon-button']);
+  deleteButton.innerHTML = '<span class="material-symbols-outlined icon">delete</span>';
+  deleteButton.addEventListener('click', () => handleTodoDelete(todoObj.parentTitle, todoObj.todoId));
+  todoActions.appendChild(deleteButton);
+
   if (todoObj.finished) {
     checkBox.setAttribute('checked', true);
   }
 
-  if (todoObj.isDue(currentDate) && !todoObj.finished) {
+  if (todoObj.isDue() && !todoObj.finished) {
     todoElement.classList.add('due');
   }
 
@@ -99,7 +105,8 @@ function displayProjectTitle(project) {
 }
 
 function handleEmptyProject(project) {
-  const emptyProjectElement = createElement('div', ['empty-project'], 'This project is empty');
+  const emptyProjectElement = createElement('div', ['empty-project']);
+  emptyProjectElement.innerHTML = '<p>This project is empty</p>';
   const actionButtons = createElement('div', ['empty-project-buttons']);
 
   if (project.deletable) {
@@ -115,7 +122,7 @@ function handleEmptyProject(project) {
     });
     actionButtons.appendChild(addTodoButton);
   } else {
-    emptyProjectElement.innerHTML = 'No reason to stress';
+    emptyProjectElement.innerHTML = '<p>No reason to stress</p>';
   }
 
   emptyProjectElement.appendChild(actionButtons);
@@ -152,9 +159,8 @@ function displayProjectTodos(todoList, projectName) {
 
 /////////////////////////////////////////projects tabs/////////////////////////////////////////
 
-function handleProjectRemove(e) {
+function handleProjectRemove(e, removingProjectName) {
   e.stopPropagation();
-  let removingProjectName = e.currentTarget.getAttribute('data-project-name');
 
   if (!projectsList.getTodoProjectByTitle(removingProjectName).isEmpty()) {
     projectNameToRemove = removingProjectName;
@@ -175,7 +181,9 @@ function createProjectButton(todoProject) {
   }
 
   if (+todosCount.innerText === 0) {
-    todosCount.innerText = '';
+    todosCount.style.display = 'none';
+  } else if (+todosCount.innerText > 9) {
+    todosCount.innerText = '+9';
   }
 
   buttonContent.appendChild(buttonText);
@@ -184,7 +192,6 @@ function createProjectButton(todoProject) {
   const button = createElement('button', ['project-button']);
   appendElements(button, buttonContent);
   button.setAttribute('data-project-name', todoProject.title);
-  button.setAttribute('data-list-name', todoProject.parentList);
 
   listItem.appendChild(button);
 
@@ -192,11 +199,11 @@ function createProjectButton(todoProject) {
     const buttonDelete = createElement('span', ['delete-project']);
     buttonDelete.innerHTML = '<span class="material-symbols-outlined icon"> close </span>';
     buttonDelete.setAttribute('data-project-name', todoProject.title);
-    buttonDelete.addEventListener('click', handleProjectRemove);
+    buttonDelete.addEventListener('click', (e) => handleProjectRemove(e, todoProject.title));
     button.appendChild(buttonDelete);
   }
 
-  button.addEventListener('click', handleProjectSwitch);
+  button.addEventListener('click', () => handleProjectSwitch(todoProject.title));
 
   return listItem;
 }
@@ -256,6 +263,36 @@ modalCloseButtons.forEach((closeButton) => {
   });
 });
 
+function showDetailsDialog(todoObj) {
+  detailsDialog.querySelector('.dialog-header').innerText = `Todo: ${todoObj.title}`;
+  const dialogBody = detailsDialog.querySelector('.dialog-body');
+  dialogBody.innerHTML = '';
+
+  const descriptionSection = createElement('div');
+  const descriptionTitle = createElement('h3', [], 'Description:');
+  const description = createElement('p', [], todoObj.description);
+  appendElements(descriptionSection, descriptionTitle, description);
+  if (todoObj.description) {
+    dialogBody.appendChild(descriptionSection);
+  }
+
+  const parentTitleSection = createElement('div');
+  const parentTitleTitle = createElement('h3', [], 'Project:');
+  const parentTitle = createElement('p', [], todoObj.parentTitle);
+  appendElements(parentTitleSection, parentTitleTitle, parentTitle);
+  dialogBody.appendChild(parentTitleSection);
+
+  const dueDateSection = createElement('div');
+  const dueDateTitle = createElement('h3', [], 'Due date:');
+  const dueDate = createElement('p', [], todoObj.dueDate);
+  appendElements(dueDateSection, dueDateTitle, dueDate);
+  if (todoObj.dueDate) {
+    dialogBody.appendChild(dueDateSection);
+  }
+
+  detailsDialog.showModal();
+}
+
 ////add project modal////
 openProjectDialog.addEventListener('click', () => {
   addProjectDialog.showModal();
@@ -281,7 +318,7 @@ openAddDialog.addEventListener('click', () => {
 addTodoForm.addEventListener('submit', () => {
   let newTodoTitle = todoTitleInput.value;
   let newTodoDetails = todoDetailsInput.value;
-  let newTodoDuedate = new Date(todoDuedateInput.value);
+  let newTodoDuedate = todoDuedateInput.value;
   let newTodoPriority = 'unset';
 
   for (let priorityRadio of todoPriorityRadios) {

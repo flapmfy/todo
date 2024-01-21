@@ -2,7 +2,7 @@ class Todo {
   constructor(title, description, dueDate, priority, finished, parentTitle = '', todoId = -1) {
     this._title = title;
     this._description = description;
-    this._dueDate = dueDate;
+    this._dueDate = new Date(dueDate);
     this._priority = priority;
     this._finished = finished;
     this._parentTitle = parentTitle;
@@ -33,9 +33,9 @@ class Todo {
     return new Todo(plainTodo.title, plainTodo.description, plainTodo.dueDate, plainTodo.priority, plainTodo.finished, plainTodo.parentTitle, plainTodo.todoId);
   }
 
-  isDue(currentDate) {
+  isDue() {
     if (this._dueDate) {
-      return currentDate > this._dueDate;
+      return new Date() > this._dueDate;
     }
     return false;
   }

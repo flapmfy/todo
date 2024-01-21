@@ -15,25 +15,15 @@ projectsList.addTodoProject(today);
 projectsList.addTodoProject(week);
 
 /////////////////////////////////////////handlers/////////////////////////////////////////
-function handleTodoCheck(e) {
-  const checkBox = e.currentTarget;
-  const todoElement = checkBox.closest('.todo');
-  changeTodoStatus(todoElement);
+function handleTodoCheck(todoObj) {
+  todoObj.finished = !todoObj.finished;
 
   updateList();
   updateInterface();
 }
 
-function changeTodoStatus(todoElement) {
-  const projectObj = projectsList.getTodoProjectByTitle(todoElement.getAttribute('data-project'));
-  const todoId = todoElement.getAttribute('data-todoid');
-  const todoObj = projectObj.getTodo(todoId);
-
-  todoObj.finished = !todoObj.finished;
-}
-
-function handleProjectSwitch(e) {
-  currentProjectName = e.currentTarget.getAttribute('data-project-name');
+function handleProjectSwitch(projectName) {
+  currentProjectName = projectName;
   updateInterface();
 }
 
@@ -58,6 +48,12 @@ function handleProjectAdd(projectName) {
 
 function handleTodoAdd(title, details, duedate, priority) {
   projectsList.getTodoProjectByTitle(currentProjectName).addTodo(new Todo(title, details, duedate, priority));
+  updateList();
+  updateInterface();
+}
+
+function handleTodoDelete(todoProjectName, todoId) {
+  projectsList.getTodoProjectByTitle(todoProjectName).removeTodo(todoId);
   updateList();
   updateInterface();
 }
@@ -96,8 +92,9 @@ function loadList() {
     home = projectsList.getTodoProjectByTitle('Home');
     today = projectsList.getTodoProjectByTitle('Today');
     week = projectsList.getTodoProjectByTitle('Week');
+    updateList();
   }
 }
 
 loadList();
-export { handleProjectSwitch, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd, hasDayLeft, hasWeekLeft, updateList, removeProject, handleTodoCheck, currentDate };
+export { handleProjectSwitch, currentProjectName, handleProjectAdd, projectsList, handleTodoAdd, hasDayLeft, hasWeekLeft, updateList, removeProject, handleTodoCheck, handleTodoDelete };
