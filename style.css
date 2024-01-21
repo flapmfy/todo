@@ -215,7 +215,7 @@ header {
 }
 
 .primary-nav button {
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   line-height: 1;
   text-align: left;
   padding: 0.5rem;
@@ -252,36 +252,19 @@ header {
 }
 
 .delete-project {
-  --line-height: 1px;
-
   display: none;
   position: relative;
-  aspect-ratio: 1 / 1;
-  width: 20px;
   border-radius: 2px;
+  color: red;
 }
 
-.delete-project:hover,
-.close-button:hover {
-  background-color: rgba(var(--rgb-dark), 0.1);
+.delete-project .icon {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+  line-height: 1;
 }
 
-.delete-project::before,
-.delete-project::after {
-  content: '';
-  position: absolute;
-  top: calc(50% - var(--line-height));
-  width: 100%;
-  height: var(--line-height);
-  background-color: var(--clr-red-400);
-}
-
-.delete-project::before {
-  transform: rotate(45deg);
-}
-
-.delete-project::after {
-  transform: rotate(-45deg);
+.delete-project:hover {
+  background-color: rgba(var(--rgb-dark), 0.07);
 }
 
 .add-project:hover {
@@ -384,6 +367,10 @@ input.invalid + .error {
   text-align: center;
 }
 
+.empty-project > * + * {
+  margin-top: 1rem;
+}
+
 #add-todo {
   padding: 1rem;
   position: absolute;
@@ -437,11 +424,15 @@ input.invalid + .error {
 
 .todo {
   background-color: var(--clr-light-400);
-  padding: 0.5rem;
+  padding: 1rem 0.5rem;
   border-left: 5px solid rgb(var(--clr, 128 128 128));
   border-radius: 5px;
-  cursor: pointer;
   transition: transform 200ms;
+}
+
+.todos-count {
+  color: red;
+  background-color: black;
 }
 
 .todo.due {

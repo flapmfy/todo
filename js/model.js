@@ -150,6 +150,10 @@ class TodoProject {
     return this._todos;
   }
 
+  get unfinishedTodos() {
+    return this._todos.filter((todo) => !todo.finished);
+  }
+
   getTodos() {
     if (this.isEmpty()) return;
     return this.todos;
@@ -259,6 +263,10 @@ class TodoList {
     });
 
     return todos;
+  }
+
+  get allUnfinishedTodos() {
+    return this.allTodos.filter((todo) => !todo.finished);
   }
 }
 

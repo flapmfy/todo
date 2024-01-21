@@ -99,7 +99,7 @@ function displayProjectTitle(project) {
 }
 
 function handleEmptyProject(project) {
-  const emptyProjectElement = createElement('div', ['empty-project'], 'This project is empty. Decide what to do with it');
+  const emptyProjectElement = createElement('div', ['empty-project'], 'This project is empty');
   const actionButtons = createElement('div', ['empty-project-buttons']);
 
   if (project.deletable) {
@@ -166,11 +166,23 @@ function handleProjectRemove(e) {
 
 function createProjectButton(todoProject) {
   const listItem = createElement('li');
-  const buttonText = createElement('span', [], todoProject.title);
-  buttonText.classList.add('button-content');
+  const buttonContent = createElement('span', ['button-content']);
+  const buttonText = createElement('span', ['button-text'], todoProject.title);
+  const todosCount = createElement('span', ['todos-count'], todoProject.unfinishedTodos.length);
+
+  if (todoProject.title === 'Home') {
+    todosCount.innerText = projectsList.allUnfinishedTodos.length;
+  }
+
+  if (+todosCount.innerText === 0) {
+    todosCount.innerText = '';
+  }
+
+  buttonContent.appendChild(buttonText);
+  buttonContent.appendChild(todosCount);
 
   const button = createElement('button', ['project-button']);
-  appendElements(button, buttonText);
+  appendElements(button, buttonContent);
   button.setAttribute('data-project-name', todoProject.title);
   button.setAttribute('data-list-name', todoProject.parentList);
 
@@ -178,6 +190,7 @@ function createProjectButton(todoProject) {
 
   if (todoProject.deletable) {
     const buttonDelete = createElement('span', ['delete-project']);
+    buttonDelete.innerHTML = '<span class="material-symbols-outlined icon"> close </span>';
     buttonDelete.setAttribute('data-project-name', todoProject.title);
     buttonDelete.addEventListener('click', handleProjectRemove);
     button.appendChild(buttonDelete);

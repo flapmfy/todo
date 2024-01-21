@@ -3,36 +3,23 @@ import { Todo, TodoProject, TodoList } from './model';
 
 let currentProjectName = 'Home';
 const currentDate = new Date();
-/////////////////////////////////////////will be deleted/////////////////////////////////////////
-// let todo1 = new Todo('Zítra', 'Toto je pouze test', new Date('January 19, 2024 03:24:00'), 'low', false);
-// let todo2 = new Todo('V týdnu', 'Toto je pouze test', new Date('January 23, 2024 03:24:00'), 'low', false);
-// let todo3 = new Todo('Dnes', 'Toto je pouze test', new Date('January 18, 2024 03:24:00'), 'medium', false);
-// let todo4 = new Todo('Déle jak týden', 'Toto je pouze test', new Date('January 30, 2024 03:24:00'), 'high', false);
 
-// const todoProject1 = new TodoProject('Škola');
-// todoProject1.addTodo(todo1);
-// todoProject1.addTodo(todo2);
-
-// const todoProject2 = new TodoProject('Práce');
-// todoProject2.addTodo(todo3);
-// todoProject2.addTodo(todo4);
-
+//////////////////////////////////////////////////////////////////////////////////
 let projectsList = new TodoList();
 
-const home = new TodoProject('Home', false);
-const today = new TodoProject('Today', false, true);
-const week = new TodoProject('Week', false, true);
+let home = new TodoProject('Home', false);
+let today = new TodoProject('Today', false, true);
+let week = new TodoProject('Week', false, true);
 projectsList.addTodoProject(home);
 projectsList.addTodoProject(today);
 projectsList.addTodoProject(week);
-// projectsList.addTodoProject(todoProject1);
-// projectsList.addTodoProject(todoProject2);
-/////////////////////////////////////////will be deleted/////////////////////////////////////////
+
+/////////////////////////////////////////handlers/////////////////////////////////////////
 function handleTodoCheck(e) {
   const checkBox = e.currentTarget;
   const todoElement = checkBox.closest('.todo');
-
   changeTodoStatus(todoElement);
+
   updateList();
   updateInterface();
 }
@@ -93,6 +80,7 @@ let hasWeekLeft = dueInNumberOfDays(7);
 function updateList() {
   today.todos = projectsList.allTodos.filter(hasDayLeft);
   week.todos = projectsList.allTodos.filter(hasWeekLeft);
+
   saveList();
 }
 
@@ -105,6 +93,9 @@ function loadList() {
   if (localStorage.getItem('todosList')) {
     let storedList = JSON.parse(localStorage.getItem('todosList'));
     projectsList = TodoList.fromPlainObject(storedList);
+    home = projectsList.getTodoProjectByTitle('Home');
+    today = projectsList.getTodoProjectByTitle('Today');
+    week = projectsList.getTodoProjectByTitle('Week');
   }
 }
 
