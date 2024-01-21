@@ -1,12 +1,43 @@
 class Todo {
-  constructor(title, description, dueDate, priority, finished) {
+  constructor(title, description, dueDate, priority, finished, parentTitle = '', todoId = -1) {
     this._title = title;
     this._description = description;
     this._dueDate = dueDate;
     this._priority = priority;
     this._finished = finished;
-    this._dateCreated = new Date();
-    this._parentTitle = '';
+    this._parentTitle = parentTitle;
+    this._todoId = todoId;
+  }
+
+  get todoId() {
+    return this._todoId;
+  }
+
+  set todoId(todoId) {
+    this._todoId = todoId;
+  }
+
+  toPlainObject() {
+    return {
+      title: this._title,
+      description: this._description,
+      dueDate: this._dueDate,
+      priority: this._priority,
+      finished: this._finished,
+      parentTitle: this._parentTitle,
+      todoId: this._todoId
+    };
+  }
+
+  static fromPlainObject(plainTodo) {
+    return new Todo(plainTodo.title, plainTodo.description, plainTodo.dueDate, plainTodo.priority, plainTodo.finished, plainTodo.parentTitle, plainTodo.todoId);
+  }
+
+  isDue(currentDate) {
+    if (this._dueDate) {
+      return currentDate > this._dueDate;
+    }
+    return false;
   }
 
   get title() {
@@ -56,29 +87,55 @@ class Todo {
   set finished(newFinished) {
     this._finished = newFinished;
   }
-
-  get dateCreated() {
-    return this._dateCreated;
-  }
 }
 
 ///////////////////////////project///////////////////////////
 
 class TodoProject {
-  constructor(title, deletable = true, addingRestricted = false) {
+  constructor(title, deletable = true, isAddingRestricted = false, todos = []) {
     this._title = title;
     this._deletable = deletable;
-    this._todos = [];
-    this._isAddingRestricted = addingRestricted;
+    this._isAddingRestricted = isAddingRestricted;
+    this._todos = todos;
+  }
+
+  reorderTodos() {
+    this._todos.forEach((todo, id) => {
+      todo.todoId = id;
+    });
+  }
+
+  toPlainObject() {
+    return {
+      title: this._title,
+      deletable: this._deletable,
+      isAddingRestricted: this._isAddingRestricted,
+      todos: this.nestedObjectToPlain()
+    };
+  }
+
+  nestedObjectToPlain() {
+    return this._todos.map((todo) => {
+      if (todo instanceof Todo) {
+        return todo.toPlainObject();
+      }
+    });
+  }
+
+  static fromPlainObject(plainProject) {
+    const todos = plainProject.todos.map((todo) => Todo.fromPlainObject(todo));
+    return new TodoProject(plainProject.title, plainProject.deletable, plainProject.isAddingRestricted, todos);
   }
 
   addTodo(todo) {
     todo.parentTitle = this._title;
     this._todos.unshift(todo);
+    this.reorderTodos();
   }
 
   removeTodo(todoId) {
     this._todos.splice(todoId, 1);
+    this.reorderTodos();
   }
 
   get isAddingRestricted() {
@@ -118,13 +175,31 @@ class TodoProject {
 ///////////////////////////projects list///////////////////////////
 
 class TodoList {
-  constructor() {
-    this._todoProjects = [];
+  constructor(todoProjects = []) {
+    this._todoProjects = todoProjects;
+  }
+
+  toPlainObject() {
+    return {
+      todoProjects: this.nestedObjectToPlain()
+    };
+  }
+
+  nestedObjectToPlain() {
+    return this._todoProjects.map((project) => {
+      if (project instanceof TodoProject) {
+        return project.toPlainObject();
+      }
+    });
+  }
+
+  static fromPlainObject(plainList) {
+    const projects = plainList.todoProjects.map((todoProject) => TodoProject.fromPlainObject(todoProject));
+    return new TodoList(projects);
   }
 
   addTodoProject(todoProject) {
     if (this.getTodoProjectByTitle(todoProject.title)) return;
-    todoProject.parentList = this._title;
     this._todoProjects.push(todoProject);
   }
 
@@ -179,18 +254,8 @@ class TodoList {
 
     this._todoProjects.forEach((todoProject) => {
       if (!todoProject.isEmpty() && !todoProject.isAddingRestricted) {
-        todos = [...todos, todoProject.todos];
+        todos = [...todos, ...todoProject.todos];
       }
-    });
-
-    return todos;
-  }
-
-  get allTodosAsArray() {
-    let todos = [];
-
-    this.allTodos.forEach((todosArray) => {
-      todos = [...todos, ...todosArray];
     });
 
     return todos;

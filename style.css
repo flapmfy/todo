@@ -444,6 +444,29 @@ input.invalid + .error {
   transition: transform 200ms;
 }
 
+.todo.due {
+  outline: 2px solid red;
+  outline-offset: 2px;
+}
+
+.todo input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.todo:has(input[type='checkbox']:checked) {
+  color: grey;
+  text-decoration: line-through;
+  border-left: 5px solid grey;
+}
+
+.todo__content {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .todo[data-priority='low'] {
   --clr: var(--rgb-green-400);
 }
