@@ -35,7 +35,9 @@ class Todo {
 
   isDue() {
     if (this._dueDate) {
-      return new Date() > this._dueDate;
+      const date = new Date();
+      const currentDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      return currentDate > this._dueDate;
     }
     return false;
   }
