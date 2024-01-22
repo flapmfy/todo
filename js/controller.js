@@ -49,6 +49,7 @@ function handleProjectAdd(projectName) {
 
 function handleTodoAdd(title, details, duedate, priority) {
   projectsList.getTodoProjectByTitle(currentProjectName).addTodo(new Todo(title, details, duedate, priority));
+  console.log(new Todo(title, details, duedate, priority));
   updateList();
   updateInterface();
 }
