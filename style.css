@@ -140,14 +140,27 @@ button {
 }
 
 .button-fill {
+  color: var(--clr-light-400);
   background-color: var(--clr-accent-400);
-  color: white;
   padding: 0.5rem 1.5rem;
   border-radius: 50px;
 }
 
 .button-fill:hover {
   filter: brightness(0.95);
+}
+
+.button-outline {
+  color: var(--clr-orange-400);
+  background-color: transparent;
+  padding: 0.5rem 1.5rem;
+  border: 3px solid var(--clr-accent-400);
+  border-radius: 50px;
+}
+
+.button-outline:hover {
+  color: var(--clr-light-400);
+  background-color: var(--clr-accent-400);
 }
 
 .icon-button {
@@ -160,7 +173,7 @@ button {
 }
 
 #app {
-  --header-heigh: 70px;
+  --header-heigh: 65px;
   margin-inline: auto;
   display: grid;
   min-height: 100vh;
@@ -173,7 +186,7 @@ header {
   padding-block: 0.5rem;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
 }
 
 .logo {
@@ -514,6 +527,7 @@ input.invalid + .error {
 }
 
 .project-header {
+  font-size: 2.25rem;
   border-bottom: 2px solid var(--clr-dark-700);
   margin-bottom: 1.5rem;
 }
@@ -522,4 +536,60 @@ input.invalid + .error {
   display: flex;
   justify-content: center;
   gap: 1rem;
+}
+
+.hamburger-button {
+  --line-height: 2px;
+  --line-gap: 10px;
+  display: none;
+  aspect-ratio: 1 / 1;
+  width: 40px;
+}
+
+.hamburger-button::before,
+.hamburger-button::after {
+  content: '';
+  width: 40px;
+  height: var(--line-height);
+  background-color: var(--clr-light-400);
+  display: block;
+  transition: transform 100ms;
+}
+
+.hamburger-button.active::before {
+  transform: translateY(calc(var(--line-gap) / 2 - var(--line-height))) rotate(45deg);
+}
+
+.hamburger-button.active::after {
+  transform: translateY(calc(-1 * (var(--line-gap) - var(--line-height)))) rotate(-45deg);
+}
+
+@media (width < 650px) {
+  .hamburger-button {
+    display: grid;
+    place-content: center;
+    gap: var(--line-gap);
+  }
+
+  .app-body {
+    grid-template-columns: 1fr;
+  }
+
+  .primary-nav {
+    position: fixed;
+    height: 100vh;
+    width: 100%;
+    padding-top: 5rem;
+    z-index: 200;
+    transform: translateX(100%);
+    transition: transform 100ms ease-in-out;
+  }
+
+  .primary-nav[aria-expanded='true'] {
+    transform: translateX(0);
+  }
+
+  .delete-project {
+    display: block;
+  }
 }

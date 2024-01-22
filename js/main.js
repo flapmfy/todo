@@ -23,6 +23,9 @@ const todoPriorityRadios = addTodoDialog.querySelectorAll('input[name="priority"
 const warnDialog = appElement.querySelector('#warn-dialog');
 const confirmDeletionButton = warnDialog.querySelector('#remove-project');
 
+const hamburgerButton = document.querySelector('.hamburger-button');
+const primaryNav = document.querySelector('.primary-nav');
+
 const detailsDialog = appElement.querySelector('#details-dialog');
 
 let projectNameToRemove = '';
@@ -153,7 +156,7 @@ function handleEmptyProject(project) {
   const actionButtons = createElement('div', ['empty-project-buttons']);
 
   if (project.deletable) {
-    const deleteButton = createElement('button', ['button-fill'], 'Remove');
+    const deleteButton = createElement('button', ['button-outline'], 'Remove');
     deleteButton.addEventListener('click', () => removeProject(project.title));
     actionButtons.appendChild(deleteButton);
   }
@@ -233,7 +236,10 @@ function createProjectButton(todoProject) {
 
   appendElements(buttonContent, buttonText, todosCount);
   button.appendChild(buttonContent);
-  button.addEventListener('click', () => handleProjectSwitch(todoProject.title));
+  button.addEventListener('click', () => {
+    closeNavbar();
+    handleProjectSwitch(todoProject.title);
+  });
   listItem.appendChild(button);
 
   if (todoProject.deletable) {
@@ -323,7 +329,7 @@ function showDetailsDialog(todoObj) {
 
   const dueDateSection = createElement('div');
   const dueDateTitle = createElement('h3', [], 'Due date:');
-  const dueDate = createElement('p', [], todoObj.dueDate);
+  const dueDate = createElement('p', [], formatedDate(todoObj.dueDate));
   appendElements(dueDateSection, dueDateTitle, dueDate);
   if (todoObj.dueDate) {
     dialogBody.appendChild(dueDateSection);
@@ -341,6 +347,7 @@ addProjectForm.addEventListener('submit', (e) => {
   let newProjectName = projectNameInput.value.trim();
 
   if (!projectsList.projectExists(newProjectName)) {
+    closeNavbar();
     handleProjectAdd(newProjectName);
     addProjectForm.reset();
   } else {
@@ -374,5 +381,15 @@ confirmDeletionButton.addEventListener('click', () => {
   removeProject(projectNameToRemove);
   warnDialog.close();
 });
+
+hamburgerButton.addEventListener('click', () => {
+  hamburgerButton.classList.toggle('active');
+  primaryNav.setAttribute('aria-expanded', primaryNav.getAttribute('aria-expanded') === 'false' ? 'true' : 'false');
+});
+
+function closeNavbar() {
+  hamburgerButton.classList.remove('active');
+  primaryNav.setAttribute('aria-expanded', 'false');
+}
 
 export { updateInterface };
