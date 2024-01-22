@@ -56,6 +56,44 @@ function showElement(element) {
   element.style.display = 'block';
 }
 
+function formatedDate(date) {
+  let day = date.getDate();
+  let month = date.getMonth() + 1;
+  let dayOfWeek = '';
+
+  switch (date.getDay()) {
+    case 0:
+      dayOfWeek = 'Sun';
+      break;
+
+    case 1:
+      dayOfWeek = 'Mon';
+      break;
+
+    case 2:
+      dayOfWeek = 'Tue';
+      break;
+
+    case 3:
+      dayOfWeek = 'Wed';
+      break;
+
+    case 4:
+      dayOfWeek = 'Thr';
+      break;
+
+    case 5:
+      dayOfWeek = 'Fri';
+      break;
+
+    case 6:
+      dayOfWeek = 'Sat';
+      break;
+  }
+
+  return `${dayOfWeek} ${day}. ${month}.`;
+}
+
 /////////////////////////////////////////todos/////////////////////////////////////////
 function createTodo(todoObj) {
   const todoElement = createElement('div', ['todo', 'flex-repel']);
@@ -68,8 +106,18 @@ function createTodo(todoObj) {
   checkBox.addEventListener('click', () => handleTodoCheck(todoObj));
   todoElementContent.appendChild(checkBox);
 
-  const todoTitle = createElement('div', ['todo__title'], `${todoObj.title}`);
-  appendElements(todoElementContent, todoTitle);
+  const todoInfo = createElement('div', ['todo__info']);
+  const todoDetails = createElement('div', ['todo-details']);
+  if (!projectsList.getTodoProjectByTitle(currentProjectName).deletable) {
+    const parentProject = createElement('span', ['todo-parent'], `${todoObj.parentTitle}, `);
+    todoDetails.appendChild(parentProject);
+  }
+  const todoDueDate = createElement('span', ['todo-duedate'], formatedDate(todoObj.dueDate));
+  const todoTitle = createElement('div', ['todo-title'], `${todoObj.title}`);
+  todoDetails.appendChild(todoDueDate);
+
+  appendElements(todoInfo, todoTitle, todoDetails);
+  appendElements(todoElementContent, todoInfo);
 
   const detailsButton = createElement('button', ['icon-button']);
   detailsButton.innerHTML = '<span class="material-symbols-outlined icon">info</span>';
@@ -86,7 +134,7 @@ function createTodo(todoObj) {
   }
 
   if (todoObj.isDue() && !todoObj.finished) {
-    todoElement.classList.add('due');
+    todoDetails.classList.add('due');
   }
 
   appendElements(todoElement, todoElementContent, todoActions);

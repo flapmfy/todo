@@ -2,7 +2,8 @@ import { updateInterface } from './main';
 import { Todo, TodoProject, TodoList } from './model';
 
 let currentProjectName = 'Home';
-const currentDate = new Date();
+const date = new Date();
+const currentDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
 //////////////////////////////////////////////////////////////////////////////////
 let projectsList = new TodoList();

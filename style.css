@@ -6,6 +6,7 @@
 
   --rgb-dark: 0, 0, 0;
   --clr-dark-700: rgb(30, 30, 30);
+  --clr-dark-400: rgb(39, 39, 39);
   --clr-light-400: rgb(255, 255, 255);
   --clr-light-500: rgb(248, 248, 248);
   --clr-red-400: rgb(255, 0, 0);
@@ -46,7 +47,7 @@ body {
   min-height: 100vh;
   text-rendering: optimizeSpeed;
   line-height: 1.5;
-  background-color: var(--clr-light-400);
+  background-color: var(--clr-dark-700);
 }
 
 a:not([class]) {
@@ -369,7 +370,7 @@ input.invalid + .error {
 }
 
 #overview {
-  border-bottom: 1px solid black;
+  border-bottom: 2px solid black;
 }
 
 #overview .project-button[data-project-name='Home'] .button-text::before {
@@ -459,6 +460,21 @@ input.invalid + .error {
   transition: transform 200ms;
 }
 
+.todo-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.todo-details {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--clr-dark-400);
+}
+
+.todo-details.due {
+  color: var(--clr-red-400);
+}
+
 .todos-count {
   display: flex;
   justify-content: center;
@@ -473,20 +489,18 @@ input.invalid + .error {
   height: 20px;
 }
 
-.todo.due {
-  outline: 2px solid red;
-  outline-offset: 2px;
-}
-
 .todo input[type='checkbox'] {
   width: 20px;
   height: 20px;
   cursor: pointer;
 }
 
-.todo:has(input[type='checkbox']:checked) {
+.todo:has(input[type='checkbox']:checked) .todo-title {
   color: grey;
   text-decoration: line-through;
+}
+
+.todo:has(input[type='checkbox']:checked) {
   border-left: 5px solid grey;
 }
 
@@ -524,7 +538,7 @@ input.invalid + .error {
 }
 
 .project-header {
-  border-bottom: 1px solid var(--clr-dark-700);
+  border-bottom: 2px solid var(--clr-dark-700);
   margin-bottom: 1.5rem;
 }
 
