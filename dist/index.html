@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <title>ToDo</title>
+    <script type="module" crossorigin src="/assets/index-dYL_255g.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-JSoTm8oI.css">
+  </head>
+  <body>
+    <main id="app">
+      <header>
+        <div class="container flex-repel">
+          <div class="logo">MyToDo</div>
+          <button class="hamburger-button a"></button>
+        </div>
+      </header>
+
+      <div class="app-body">
+        <nav class="primary-nav" aria-expanded="false">
+          <div id="overview"></div>
+
+          <div class="projects-list">
+            <button class="add-project bold flex-group">Add project<span class="material-symbols-outlined"> add </span></button>
+            <div id="projects"></div>
+          </div>
+        </nav>
+
+        <div id="todos-list"></div>
+
+        <button class="button-fill" id="add-todo"><span class="material-symbols-outlined"> add </span></button>
+      </div>
+
+      <div class="modals">
+        <dialog id="warn-dialog">
+          <header>
+            <div class="dialog-header">Delete project</div>
+            <button class="modal-close-btn"><span class="material-symbols-outlined"> close </span></button>
+          </header>
+
+          <div class="dialog-body text-center">
+            <div class="dialog-body">
+              <p>This project isn't empty. All todos will be removed with it.</p>
+            </div>
+
+            <button class="button-outline" id="remove-project">Remove</button>
+          </div>
+        </dialog>
+
+        <dialog id="project-dialog">
+          <header>
+            <div class="dialog-header">Create project</div>
+            <button class="modal-close-btn"><span class="material-symbols-outlined"> close </span></button>
+          </header>
+
+          <div class="dialog-body">
+            <form method="dialog">
+              <div class="form-group">
+                <label for="project-name-input">Project name</label>
+                <input type="text" name="projectName" id="project-name-input" placeholder="Homeworks" autocomplete="off" required />
+              </div>
+              <button class="button-fill" type="submit">Create</button>
+            </form>
+          </div>
+        </dialog>
+
+        <dialog id="add-dialog">
+          <header>
+            <div class="dialog-header">Add todo</div>
+            <button class="modal-close-btn"><span class="material-symbols-outlined"> close </span></button>
+          </header>
+
+          <div class="dialog-body">
+            <form method="dialog">
+              <div class="form-group">
+                <label for="todo-title-input">Title</label>
+                <input type="text" name="projectName" id="todo-title-input" placeholder="Math" autocomplete="off" required />
+              </div>
+
+              <div class="form-group">
+                <label for="todo-details-input">Details</label>
+                <textarea name="" id="todo-details-input" cols="30" rows="5"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="todo-duedate-input">Due date</label>
+                <input type="date" name="" id="todo-duedate-input" />
+              </div>
+
+              <div class="flex-group select-one">
+                <div class="low">
+                  <input type="radio" name="priority" id="low" value="low" />
+                  <label for="low">Low</label>
+                </div>
+
+                <div class="medium">
+                  <input type="radio" name="priority" id="medium" value="medium" />
+                  <label for="medium">Medium</label>
+                </div>
+
+                <div class="high">
+                  <input type="radio" name="priority" id="high" value="high" />
+                  <label for="high">High</label>
+                </div>
+              </div>
+              <button class="button-fill" type="submit">Add</button>
+            </form>
+          </div>
+        </dialog>
+
+        <dialog id="details-dialog">
+          <header>
+            <div class="dialog-header"></div>
+            <button class="modal-close-btn"><span class="material-symbols-outlined"> close </span></button>
+          </header>
+          <div class="dialog-body"></div>
+        </dialog>
+      </div>
+    </main>
+  </body>
+</html>
