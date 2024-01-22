@@ -12,16 +12,16 @@
       <header>
         <div class="container flex-repel">
           <div class="logo">MyToDo</div>
-          <button class="hamburget-button">button</button>
+          <button class="hamburger-button a"></button>
         </div>
       </header>
 
       <div class="app-body">
-        <nav class="primary-nav">
+        <nav class="primary-nav" aria-expanded="false">
           <div id="overview"></div>
 
           <div class="projects-list">
-            <button class="add-project bold">Add project<span class="material-symbols-outlined"> add </span></button>
+            <button class="add-project bold flex-group">Add project<span class="material-symbols-outlined"> add </span></button>
             <div id="projects"></div>
           </div>
         </nav>
@@ -43,7 +43,7 @@
               <p>This project isn't empty. All todos will be removed with it.</p>
             </div>
 
-            <button class="button-fill" id="remove-project">Remove</button>
+            <button class="button-outline" id="remove-project">Remove</button>
           </div>
         </dialog>
 
@@ -114,8 +114,6 @@
             <button class="modal-close-btn"><span class="material-symbols-outlined"> close </span></button>
           </header>
           <div class="dialog-body"></div>
-
-          <button class="button-fill modal-close-btn" id="remove-project">Close</button>
         </dialog>
       </div>
     </main>

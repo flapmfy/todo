@@ -2,7 +2,13 @@ class Todo {
   constructor(title, description, dueDate, priority, finished, parentTitle = '', todoId = -1) {
     this._title = title;
     this._description = description;
-    this._dueDate = new Date(dueDate);
+
+    if (!dueDate) {
+      this._dueDate = '';
+    } else {
+      this._dueDate = new Date(dueDate);
+    }
+
     this._priority = priority;
     this._finished = finished;
     this._parentTitle = parentTitle;

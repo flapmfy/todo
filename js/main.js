@@ -23,14 +23,10 @@ const todoPriorityRadios = addTodoDialog.querySelectorAll('input[name="priority"
 const warnDialog = appElement.querySelector('#warn-dialog');
 const confirmDeletionButton = warnDialog.querySelector('#remove-project');
 
+const hamburgerButton = document.querySelector('.hamburger-button');
+const primaryNav = document.querySelector('.primary-nav');
+
 const detailsDialog = appElement.querySelector('#details-dialog');
-
-//display sorted
-//decide HTML structure
-//refactor, SOLID principles
-
-//* try drag and drop for reordering todos */
-//* add calendar for picking due date of todo */
 
 let projectNameToRemove = '';
 
@@ -57,6 +53,7 @@ function showElement(element) {
 }
 
 function formatedDate(date) {
+  if (!date) return;
   let day = date.getDate();
   let month = date.getMonth() + 1;
   let dayOfWeek = '';
@@ -99,35 +96,19 @@ function createTodo(todoObj) {
   const todoElement = createElement('div', ['todo', 'flex-repel']);
   const todoElementContent = createElement('div', ['todo__content']);
   const todoActions = createElement('div', ['todo-actions', 'flex-group']);
-  todoElement.setAttribute('data-priority', todoObj.priority);
-
   const checkBox = createElement('input');
-  checkBox.setAttribute('type', 'checkbox');
-  checkBox.addEventListener('click', () => handleTodoCheck(todoObj));
-  todoElementContent.appendChild(checkBox);
-
   const todoInfo = createElement('div', ['todo__info']);
   const todoDetails = createElement('div', ['todo-details']);
-  if (!projectsList.getTodoProjectByTitle(currentProjectName).deletable) {
-    const parentProject = createElement('span', ['todo-parent'], `${todoObj.parentTitle}, `);
-    todoDetails.appendChild(parentProject);
-  }
-  const todoDueDate = createElement('span', ['todo-duedate'], formatedDate(todoObj.dueDate));
   const todoTitle = createElement('div', ['todo-title'], `${todoObj.title}`);
-  todoDetails.appendChild(todoDueDate);
-
-  appendElements(todoInfo, todoTitle, todoDetails);
-  appendElements(todoElementContent, todoInfo);
+  const todoDueDate = createElement('span', ['todo-duedate'], formatedDate(todoObj.dueDate));
 
   const detailsButton = createElement('button', ['icon-button']);
   detailsButton.innerHTML = '<span class="material-symbols-outlined icon">info</span>';
-  detailsButton.addEventListener('click', () => showDetailsDialog(todoObj));
-  todoActions.appendChild(detailsButton);
-
   const deleteButton = createElement('button', ['icon-button']);
   deleteButton.innerHTML = '<span class="material-symbols-outlined icon">delete</span>';
-  deleteButton.addEventListener('click', () => handleTodoDelete(todoObj.parentTitle, todoObj.todoId));
-  todoActions.appendChild(deleteButton);
+
+  todoElement.setAttribute('data-priority', todoObj.priority);
+  checkBox.setAttribute('type', 'checkbox');
 
   if (todoObj.finished) {
     checkBox.setAttribute('checked', true);
@@ -137,7 +118,24 @@ function createTodo(todoObj) {
     todoDetails.classList.add('due');
   }
 
+  todoElementContent.appendChild(checkBox);
+
+  if (!projectsList.getTodoProjectByTitle(currentProjectName).deletable) {
+    const parentProject = createElement('span', ['todo-parent'], `${todoObj.parentTitle}, `);
+    todoDetails.appendChild(parentProject);
+  }
+
+  todoDetails.appendChild(todoDueDate);
+  appendElements(todoInfo, todoTitle, todoDetails);
+  todoElementContent.appendChild(todoInfo);
+  todoActions.appendChild(detailsButton);
+  todoActions.appendChild(deleteButton);
   appendElements(todoElement, todoElementContent, todoActions);
+
+  checkBox.addEventListener('click', () => handleTodoCheck(todoObj));
+  detailsButton.addEventListener('click', () => showDetailsDialog(todoObj));
+  deleteButton.addEventListener('click', () => handleTodoDelete(todoObj.parentTitle, todoObj.todoId));
+
   return todoElement;
 }
 
@@ -158,7 +156,7 @@ function handleEmptyProject(project) {
   const actionButtons = createElement('div', ['empty-project-buttons']);
 
   if (project.deletable) {
-    const deleteButton = createElement('button', ['button-fill'], 'Remove');
+    const deleteButton = createElement('button', ['button-outline'], 'Remove');
     deleteButton.addEventListener('click', () => removeProject(project.title));
     actionButtons.appendChild(deleteButton);
   }
@@ -220,9 +218,11 @@ function handleProjectRemove(e, removingProjectName) {
 
 function createProjectButton(todoProject) {
   const listItem = createElement('li');
+  const button = createElement('button', ['project-button', 'flex-repel']);
   const buttonContent = createElement('span', ['button-content']);
   const buttonText = createElement('span', ['button-text'], todoProject.title);
   const todosCount = createElement('span', ['todos-count'], todoProject.unfinishedTodos.length);
+  button.setAttribute('data-project-name', todoProject.title);
 
   if (todoProject.title === 'Home') {
     todosCount.innerText = projectsList.allUnfinishedTodos.length;
@@ -234,13 +234,12 @@ function createProjectButton(todoProject) {
     todosCount.innerText = '+9';
   }
 
-  buttonContent.appendChild(buttonText);
-  buttonContent.appendChild(todosCount);
-
-  const button = createElement('button', ['project-button']);
-  appendElements(button, buttonContent);
-  button.setAttribute('data-project-name', todoProject.title);
-
+  appendElements(buttonContent, buttonText, todosCount);
+  button.appendChild(buttonContent);
+  button.addEventListener('click', () => {
+    closeNavbar();
+    handleProjectSwitch(todoProject.title);
+  });
   listItem.appendChild(button);
 
   if (todoProject.deletable) {
@@ -250,8 +249,6 @@ function createProjectButton(todoProject) {
     buttonDelete.addEventListener('click', (e) => handleProjectRemove(e, todoProject.title));
     button.appendChild(buttonDelete);
   }
-
-  button.addEventListener('click', () => handleProjectSwitch(todoProject.title));
 
   return listItem;
 }
@@ -332,7 +329,7 @@ function showDetailsDialog(todoObj) {
 
   const dueDateSection = createElement('div');
   const dueDateTitle = createElement('h3', [], 'Due date:');
-  const dueDate = createElement('p', [], todoObj.dueDate);
+  const dueDate = createElement('p', [], formatedDate(todoObj.dueDate));
   appendElements(dueDateSection, dueDateTitle, dueDate);
   if (todoObj.dueDate) {
     dialogBody.appendChild(dueDateSection);
@@ -350,6 +347,7 @@ addProjectForm.addEventListener('submit', (e) => {
   let newProjectName = projectNameInput.value.trim();
 
   if (!projectsList.projectExists(newProjectName)) {
+    closeNavbar();
     handleProjectAdd(newProjectName);
     addProjectForm.reset();
   } else {
@@ -383,5 +381,15 @@ confirmDeletionButton.addEventListener('click', () => {
   removeProject(projectNameToRemove);
   warnDialog.close();
 });
+
+hamburgerButton.addEventListener('click', () => {
+  hamburgerButton.classList.toggle('active');
+  primaryNav.setAttribute('aria-expanded', primaryNav.getAttribute('aria-expanded') === 'false' ? 'true' : 'false');
+});
+
+function closeNavbar() {
+  hamburgerButton.classList.remove('active');
+  primaryNav.setAttribute('aria-expanded', 'false');
+}
 
 export { updateInterface };
