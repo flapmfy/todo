@@ -309,6 +309,17 @@ header {
   background-color: rgba(var(--rgb-dark), 0.07);
 }
 
+@keyframes dialog-open {
+  from {
+    opacity: 0;
+    scale: 25%;
+  }
+  to {
+    opacity: 1;
+    scale: 100%;
+  }
+}
+
 dialog {
   position: relative;
   border: none;
@@ -316,6 +327,10 @@ dialog {
   margin-inline: auto;
   top: 50%;
   transform: translateY(-50%);
+}
+
+dialog[open] {
+  animation: dialog-open 200ms ease normal;
 }
 
 dialog > header {
